@@ -21,7 +21,7 @@ const SettingsPage = () => {
         <div className=''>
             
             <Tabs defaultValue="Notification" className="w-full ">
-                <TabsList className="w-full justify-start  bg-[#090E2980]/50 md:pt-5 md:px-8 ">
+                <TabsList className="w-full justify-start  bg-[#090E2980]/50 md:pt-3 md:px-8 ">
                     {tabArray.map((tab) => (
                         <TabsTrigger 
                             key={tab} 

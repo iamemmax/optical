@@ -39,15 +39,12 @@ const AboutSection = () => {
             </div>
           </div>
 
-          <h2 className="text-[2rem] max-xxscren:text-[1rem] lg:text-[2.5rem] 3xl:text-[5rem] font-verdana font-bold text-white text-opacity-30 leading-tight">
-            Opticraft Trading Platform
+          <h2 className="text-[2rem] max-xxscren:text-[1rem]  lg:text-[2.25rem] 2xl:text-[3.5rem] font-verdana font-bold text-white text-opacity-30 leading-tight">
+          Built for Investor, Trusted by Businesses.
           </h2>
 
           <p className="leading-relaxed font-outfit text-sm 2xl:text-xl">
-            Opticraft is a cutting-edge trading investment platform designed to
-            empower traders with real-time market insights, AI-driven trading
-            signals, and secure investment solutions. Our goal is to make
-            trading simpler, smarter, and more profitable for everyone.
+          Opticraft is an all in one platform where individual and institutional investors grow through professional trading and onlending services. Our mission is simple: Make financial growth accessible and secure.
           </p>
 
           <div className=" mt-5">

@@ -2,102 +2,89 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import EthereumeIcon from '@/app/icons/EthereumeIcon';
-import BitcoinIcon from '@/app/icons/BitcoinIcon';
-import RippleIcon from '@/app/icons/RippleIcon';
+
+import LibertyAssuredLogo from '@/app/icons/logos/LibertyAssurdLogo';
+import LibertyPayLogo from '@/app/icons/logos/LibertyPayLogo';
+import Paybox360Logo from '@/app/icons/logos/Paybox360Logo';
+import WinWiseLogo from '@/app/icons/logos/WInwiseLogo';
+import WhisperSmsLogo from '@/app/icons/logos/WhisperSmsLogo';
+import GetlinkedLogo from '@/app/icons/logos/GetlinkedLogo';
+import SeedByPeniesLogo from '@/app/icons/logos/SeedByPeniesLogo';
 
 const Marquee = () => {
   const [width, setWidth] = useState(0);
-  // Fix TypeScript error by properly typing the ref
   const marqueeRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
 
   const cryptoData = [
-    {
-      icon: <RippleIcon />,
-      name: "Ripple",
-      value: "₦10,000"
-    },
-    {
-      icon: <EthereumeIcon />,
-      name: "Ethereume",
-      value: "₦10,000"
-    },
-    {
-      icon: <BitcoinIcon />,
-      name: "Bitcoin",
-      value: "₦10,000"
-    },
-    {
-      icon: <RippleIcon />,
-      name: "Ripple",
-      value: "₦10,000"
-    },
-    {
-      icon: <EthereumeIcon />,
-      name: "Ethereume",
-      value: "₦10,000"
-    },
-    {
-      icon: <BitcoinIcon />,
-      name: "Bitcoin",
-      value: "₦10,000"
-    },
+    { icon: <LibertyAssuredLogo /> },
+    { icon: <LibertyPayLogo /> },
+    { icon: <Paybox360Logo /> },
+    { icon: <WinWiseLogo /> },
+    { icon: <WhisperSmsLogo /> },
+    { icon: <GetlinkedLogo /> },
+    { icon: <SeedByPeniesLogo /> },
   ];
-
-  // Create a repeated array to ensure continuous scrolling
-  const fullArray = [...cryptoData, ...cryptoData, ...cryptoData];
 
   useEffect(() => {
     if (marqueeRef.current) {
-      // Set the width of the container with null check
       setWidth(marqueeRef.current.scrollWidth / 3);
     }
+    
+    // Recalculate on window resize
+    const handleResize = () => {
+      if (marqueeRef.current) {
+        setWidth(marqueeRef.current.scrollWidth / 3);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Faster animation duration for all devices
+  const getAnimationDuration = () => {
+    // Check if window is available (client-side)
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth >= 1536) { // 2xl breakpoint
+        return 10; // Faster for large screens
+      } else if (window.innerWidth >= 1280) { // xl breakpoint
+        return 12;
+      }
+    }
+    return 15; // Default duration (faster than before)
+  };
+
   return (
-    <div className="w-full bg-white py-4  2xl:py-6 overflow-hidden relative">
+    <div className="w-full bg-[#02010d] py-4 2xl:py-6 overflow-hidden relative">
       {/* Animation overlay effects */}
-      <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-white to-transparent z-10"></div>
-      <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white to-transparent z-10"></div>
+      <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#02010d] to-transparent z-10"></div>
+      <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#0b0d01] to-transparent z-10"></div>
       
       <div className="flex items-center">
         <motion.div
           ref={marqueeRef}
           className="flex gap-10" 
           animate={{
-            x: isPaused ? 0 : [-width, 0],
+            x: [-width, 0],
           }}
           transition={{
             x: {
-              duration: 20,
+              duration: getAnimationDuration(),
               ease: "linear",
               repeat: Infinity,
               repeatType: "loop",
             }
           }}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
         >
-          {fullArray.map((item, idx) => (
-            <motion.div 
+          {cryptoData.map((item, idx) => (
+            <div 
               className="flex items-center gap-3 px-2" 
               key={idx}
-              whileHover={{ 
-                scale: 1.05, 
-                transition: { duration: 0.2 } 
-              }}
             >
-              <motion.div 
-                className="flex-shrink-0"
-                whileHover={{ rotate: 10 }}
-              >
-                {item?.icon}
-              </motion.div>
-              <p className="font-medium text-sm sm:text-lg font-verdana whitespace-nowrap">
-                {`${item?.name} - ${item?.value}`}
-              </p>
-            </motion.div>
+              <div className="flex-shrink-0">
+                {item.icon}
+              </div>
+            </div>
           ))}
         </motion.div>
       </div>

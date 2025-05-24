@@ -1,8 +1,8 @@
 import React from "react";
-import PhoneImage from "./landing-images/PhoneImages";
 import { Button, LinkButton } from "@/components/core";
 import AppStore from "./landing-images/AppStore";
 import PlayStore from "./landing-images/PlayStore";
+import DoublePhoneImages from "./landing-images/PhoneImages";
 
 const GetAppSection = () => {
   return (
@@ -26,8 +26,8 @@ const GetAppSection = () => {
         </div>
         <div className="relative max-md:hidden ">
           <div className=" absolute -top-[7.6rem] 2xl:top-[-6rem] right-0">
-            <PhoneImage className="w-[100%] h-[430px]"/>
-          </div>
+            <DoublePhoneImages  className="w-[100%] h-[430px]"/>        
+              </div>
         </div>
       </div>
 

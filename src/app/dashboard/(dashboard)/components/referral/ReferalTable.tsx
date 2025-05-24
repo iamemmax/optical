@@ -76,7 +76,7 @@ const ReferalTable = () => {
       }),
       columnHelper.accessor("rewardEarned", {
         header: () => "Reward Earned",
-        cell: (info) => convertNumberToNaira(Number(info.getValue())),
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("status", {
         header: () => "Status",
@@ -203,12 +203,12 @@ const ReferalTable = () => {
               </Table>
   :
          <Table className=''>
-                <TableHeader className="bg-[#0B1739] border- px-4 ">
+                <TableHeader className="bg-[#0B1739]   ">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
                         <TableHead
-                          className="font-nunito text-sm text-white font-medium"
+                          className="font-nunito text-sm text-white  font-medium"
                           key={header.id}
                         >
                           {flexRender(

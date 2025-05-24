@@ -9,6 +9,7 @@ import useClipboard from '@/hooks/useClipboard copy';
 import React, { useState } from 'react'
 import Select, { StylesConfig } from "react-select";
 import ReferalTable from '../(dashboard)/components/referral/ReferalTable';
+import WithdrawalModal from '../(dashboard)/components/referral/WithdrawalModal';
 
 type OptionType = {
   label: string;
@@ -18,6 +19,7 @@ type OptionType = {
 const Page = () => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [selectedReferralOption, setSelectedReferralOption] = useState<OptionType | null>(null);
+    const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
     
     const filterStatus: OptionType[] = [
         { label: "today", value: "today" },
@@ -191,7 +193,10 @@ const Page = () => {
                                 />
                             </div>
                             <div className="">
-                                <Button className="bg-white text-[#2B3AA6] font-outfit text-sm h-[46px]">
+                                <Button 
+                                    className="bg-white text-[#2B3AA6] font-outfit text-sm h-[46px]"
+                                    onClick={() => setWithdrawalModalOpen(true)}
+                                >
                                     Withdrawal
                                 </Button>
                             </div>
@@ -202,7 +207,7 @@ const Page = () => {
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center gap-4">
 {
     cardsArray?.map((card,idx:number)=>(
-        <div className="border-[0.5px] border-[#4453DD] p-4 2xl:p-6 rounded-10 flex flex-col gap-4" key={idx}>
+        <div className="border-[0.5px] border-[#4453DD] p-4 2xl:p-6 rounded-10 flex flex-col gap-2" key={idx}>
            <div className="flex items-center gap-2">
             <div className="flex items-center justify-center h-8 w-8 rounded-full border-[0.5px] border-[#4453DD]"> {card?.icon}</div>
             <p className='font-outfit text-white text-xs'>{card?.title}</p>
@@ -218,8 +223,16 @@ const Page = () => {
 
             </div>
                 <ReferalTable/>
+
+               {withdrawalModalOpen&& <WithdrawalModal 
+    isOpen={withdrawalModalOpen}
+    onClose={() => setWithdrawalModalOpen(false)}
+    walletBalance="24,041.08"
+/>}
         </div>
     )
 }
+
+
 
 export default Page

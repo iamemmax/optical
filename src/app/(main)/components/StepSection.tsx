@@ -70,18 +70,18 @@ const StepSection = () => {
   ];
 
   return (
-    <div className=" rounded-t-[3.25rem] md:rounded-t-[9.375rem] bg-[position:center] bg-[#02010d] w-full  bg-[url('/images/homepage/map.svg')] rounded-md bg-no-repeat bg-opacity-50">
-      <div className=" px-6 bg-no-repeat bg-cover h-full md:px-[2rem] pt-[2rem] sm:pt-[4.5rem] pb-5 xl:pb-[50px] xl:px-[4.5rem]">
+    <div className=" rounded-t-[3.25rem] md:rounded-t-[9.375rem] bg-[position:center] bg-[#080628] w-full  bg-[url('/images/homepage/map.svg')] rounded-md bg-no-repeat max-2xl:bg-contain bg-cover bg-opacity-50">
+      <div className=" px-6 bg-no-repeat bg-cover h-full md:px-[2rem] pt-[2rem] sm:pt-[2.5rem] pb-5 xl:pb-[50px] xl:px-[4.5rem]">
         <div className="flex flex-col items-center justify-center text-center">
           <h2 className="font-verdana font-bold max-xxscren:text-[3rem] text-[2rem] sm:text-[3rem] lg:text-[7.5rem] text-white text-opacity-10 leading-none">
             GET STARTED
           </h2>
-          <p className="font-outfit font-bold text-xl sm:text-[1.5rem] lg:text-[3rem] max-w-[53.125rem] text-white -mt-5 leading-[3rem] sm:leading-[3.5rem]">
+          <p className="font-outfit font-bold text-xl sm:text-[1.5rem] lg:text-[3rem] max-w-[53.125rem] text-white -mt-10 leading-[3rem] sm:leading-[3.5rem]">
             Simple Steps to Get Started
           </p>
         </div>
 
-        <div className="relative flex justify-center items-center flex-col w-full mt-3">
+        <div className="relative flex justify-center items-center flex-col w-full mt-[6rem]">
           <div className="relative grid gap-5 sm:gap-14 items-start mt-9 w-full lg:max-w-[700px] 2xl:max-w-[900px]">
             {/* Vertical line */}
             <div
@@ -95,7 +95,7 @@ const StepSection = () => {
             {stepsData?.map((step, index) => (
               <div
                 key={index}
-                className={`relative flex flex-col sm:flex-row ${
+                className={`relative flex  flex-col sm:flex-row ${
                   index % 2 !== 0 ? "sm:flex-row-reverse" : ""
                 } w-full items-center`}
               >
@@ -127,8 +127,8 @@ const StepSection = () => {
                       index % 2 === 0 ? "end" : "start"
                     } w-full`}
                   >
-                    <div className="grid grid-cols-[1fr_4fr] items-start gap-x-4 w-full">
-                      <span className="font-verdana text-[1.5rem] sm:text-[2rem] text-white text-opacity-30 font-bold shrink-0 leading-none">
+                    <div className={`grid ${index % 2 !== 0 ? "grid-cols-[4fr_1fr]" : "grid-cols-[1fr_4fr]"} items-start gap-x-4 w-full`}>
+                      <span className={`font-verdana text-[1.5rem] sm:text-[2rem] text-white text-opacity-30 font-bold shrink-0 leading-none ${index % 2 !== 0 ? "order-last" : ""}`}>
                         {step.number}
                       </span>
                       <div>

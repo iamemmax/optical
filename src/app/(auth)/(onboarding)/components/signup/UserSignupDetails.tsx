@@ -38,7 +38,7 @@ const UserSignupDetails = ({onNext}: prop) => {
     }
   }
   return (
-    <div className="text-white overflow-y-auto relative border-[.0187rem] py-6 xl:py-[1.75rem]  border-[#4649E5] px-6 md:px-[50px] rounded-[1.25rem]">
+    <div className="text-white overflow-y-auto max-h-[84vh] relative border-[.0187rem] py-6 xl:py-[1.75rem]  border-[#4649E5] px-6 md:px-[50px] rounded-[1.25rem]">
       <div className="">
         <h2 className="text-white font-verdana font-bold text-[1.25rem] xl:text-[1.75rem]">
           Let’s Get Started
@@ -205,7 +205,7 @@ const UserSignupDetails = ({onNext}: prop) => {
           )}
         </div>
       </div>
-<div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
+<div className="mt-[4rem] flex flex-col pb-[2.75rem]">
     <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm ">Get Started</Button>
     <LinkButton className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm " variant={"outlined"} href={"/login"}>Already have an account? <span className="font-normal">Login</span></LinkButton>
 </div>

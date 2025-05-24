@@ -15,6 +15,7 @@ const AccountSecurity = () => {
   const [showOldPassword, setShowOldPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [dismisedBanner, setDismisedBanner] = useState(false)
   const [sessions, setSessions] = useState([
     {
       id: 1,
@@ -89,11 +90,10 @@ const AccountSecurity = () => {
   };
   const currentSession = sessions.find(session => session.status === "Current session");
   const otherSessions = sessions.filter(session => session.status !== "Current session");
-  
   return (
     <div className='w-full mx-auto'>
       {/* Security Alert Banner */}
-      <div className="bg-[#0B1739] w-full border-l-[10px] border-[#4453DD] mb-4 md:mb-6 rounded-[1.25rem] py-4 lg:py-[1.75rem]">
+    {!dismisedBanner&&  <div className="bg-[#0B1739] w-full border-l-[10px] border-[#4453DD] mb-4 md:mb-6 rounded-[1.25rem] py-4 lg:py-[1.75rem]">
         <div className="w-full 2xl:max-w-[1400px] px-4 ll   lg:px-[2.625rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
           <div className="flex items-center gap-2 lg:gap-3">
             <div >
@@ -112,11 +112,12 @@ const AccountSecurity = () => {
           <Button 
             variant="outlined" 
             className="text-white/70 border-white/60 text-sm lg:text-base w-full md:w-auto"
+            onClick={()=>setDismisedBanner(true)}
           >
             Dismiss
           </Button>
         </div>
-      </div>
+      </div>}
 
       <div className="bg-[#090E2980] rounded-[1.25rem] p-4 md:p-[2.625rem]">
         {/* Security Section Header */}

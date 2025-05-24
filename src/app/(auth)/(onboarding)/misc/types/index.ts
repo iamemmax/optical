@@ -209,7 +209,19 @@ export type LoginOtpDto = {
   referal_code: string | null;
 };
 
-
+export interface LoginResponse {
+  status: string;
+  message: string;
+  tokens: {
+    refresh: string;
+    access: string;
+  };
+  contestant_details: {
+    name: string;
+    contestant_id: number;
+    contestant_attr: string;
+  };
+}
 
 export interface UserDataTypes {
   id: string;

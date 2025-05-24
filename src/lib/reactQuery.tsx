@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { DefaultOptions, QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+// import { ReactQueryDevtools } from 'react-query/devtools';
 
 interface ReactQueryProviderProps {
   children: React.ReactNode;
@@ -30,9 +30,9 @@ const ReactQueryProvider: React.FunctionComponent<ReactQueryProviderProps> = ({
     <QueryClientProvider client={queryClient}>
       {children}
 
-      {process.env.NODE_ENV !== 'test' && (
+      {/* {process.env.NODE_ENV !== 'test' && (
         <ReactQueryDevtools initialIsOpen={false} />
-      )}
+      )} */}
     </QueryClientProvider>
   );
 };

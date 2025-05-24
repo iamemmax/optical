@@ -27,7 +27,7 @@ const OnboardingLayout = ({
     <div className={`w-full h-screen bg-[url('/images/homepage/landing-page-bg.svg')]  overflow-hidden grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] `}  style={{ height: 'var(--app-height)' }}>
       <div className="w-full h-full bg-[#02010D]  flex flex-col overflow-hidden">
         {/* Fixed header section */}
-        <div className="flex justify-between items-center w-full px-4 md:px-[2rem] xl:px-[4.5rem] py-6  xl:pt-[2rem]">
+        <div className="flex justify-between   items-center w-full px-4 md:px-[2rem] xl:px-[4.5rem] py-4  xl:pt-[1rem]">
           <div>
             <LinkButton className='text-white px-0 lg:px-[1rem] font-verdana font-bold text-xs md:text-base' href={"/"}>
               <OpticalLogo/> Opticraft Trading
@@ -41,7 +41,7 @@ const OnboardingLayout = ({
         </div>
         
         {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto px-4 md:px-[2rem]  flex justify-center items-center mt-[1rem] xl:mt-[2rem] pb-[2.625rem]">
+        <div className="flex-1 overflow-y-auto px-4 md:px-[2rem]   flex justify-center items-center  pb-[2.625rem]">
           <div className="w-full max-w-[40.75rem] ">
 
           {children}
