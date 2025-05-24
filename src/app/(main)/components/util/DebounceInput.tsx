@@ -29,7 +29,7 @@ const DebounceInput = ({
     }, [value, debounce, onChange]);
 
     return (
-        <div className="border-[.0313rem] gap-x-2 border-[#D6D6D6] flex items-center  text-xs  h-10  px-[1.3rem] rounded-lg">
+        <div className=" gap-x-2  border-none outline-none bg-white/10 flex items-center  text-xs  h-[3rem]  px-[1.3rem] rounded-lg">
             <svg
                 fill="none"
                 height="18"
@@ -47,7 +47,7 @@ const DebounceInput = ({
             </svg>
 
             <input
-                className={`h-full border-none  outline-none ${className}`}
+                className={`h-full border-none  w-full text-white bg-transparent outline-none ${className}`}
                 onChange={(e) => setValue(e.target.value)}
                 {...props}
                 defaultValue={value}

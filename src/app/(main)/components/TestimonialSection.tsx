@@ -206,7 +206,7 @@ const TestimonialSection: React.FC = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative overflow-hidden min-h-[400px] mt-8 md:mt-11">
+        <div className="relative overflow-hidden min-h-[100px]  md:mt-11">
           {/* Carousel Track - Show 3 cards on desktop, partial cards on mobile */}
           <div className="flex justify-center items-center h-full">
             {/* Desktop view - 3 full cards */}
@@ -219,7 +219,7 @@ const TestimonialSection: React.FC = () => {
                   return (
                     <motion.div
                       key={`${card.originalIndex}-${card.position}`}
-                      className={`testimonial-card flex-shrink-0 w-[400px] px-6 py-12 rounded-2xl ${bgColor} ${textColor} cursor-pointer transition-all duration-300`}
+                      className={`testimonial-card flex-shrink-0 w-[400px] px-6 md:py-12 rounded-2xl ${bgColor} ${textColor} cursor-pointer transition-all duration-300`}
                       onClick={() => setActiveIndex(card.originalIndex)}
                       initial={{ 
                         scale: 0.8, 
@@ -278,7 +278,7 @@ const TestimonialSection: React.FC = () => {
             </div>
 
             {/* Mobile view - Main card with peek of adjacent cards */}
-            <div className="lg:hidden relative overflow-hidden min-h-[450px] w-full">
+            <div className="lg:hidden relative overflow-hidden min-h-[300px] w-full">
               <div className="absolute w-full h-full flex items-center">
                 <AnimatePresence mode="popLayout">
                   {visibleCards.map((card) => {
