@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# Simple script to push to two Git repositories
-# Usage: ./dual-push.sh "Commit message"
+# Script to push to two different GitHub repositories
+# Usage: ./dual-push.sh "Your commit message"
+
+# Exit if any command fails
+set -e
+
+# Repository URLs - replace with your actual repository URLs
+MAIN_REPO="https://github.com/EdmundGiwa/opti-craft-dashboard.git"
+SECONDARY_REPO="https://github.com/iamemmax/optical.git"
 
 # Check if commit message is provided
 if [ -z "$1" ]; then
@@ -12,31 +19,31 @@ fi
 
 COMMIT_MESSAGE="$1"
 
-# Make sure both remotes exist
-if ! git remote | grep -q "^origin$"; then
-  echo "Error: 'origin' remote does not exist"
-  exit 1
-fi
+# Get current branch name
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+echo "Current branch: ${CURRENT_BRANCH}"
 
-if ! git remote | grep -q "^secondary$"; then
-  echo "Please enter the URL for the secondary repository:"
-  read SECONDARY_URL
-  git remote add secondary "$SECONDARY_URL"
-  echo "Added secondary remote"
-fi
-
-# Stage and commit
+# Add all changes
 git add .
+
+# Commit changes
 git commit -m "$COMMIT_MESSAGE"
 
-# Get current branch
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+# Push to main repository
+echo "Pushing to main repository (${MAIN_REPO})..."
+git push origin ${CURRENT_BRANCH}
 
-# Push to both repositories
-echo "Pushing to origin..."
-git push origin "$BRANCH"
+# Check if secondary repository remote exists
+if ! git remote | grep -q "^secondary$"; then
+  echo "Adding secondary repository remote..."
+  git remote add secondary ${SECONDARY_REPO}
+else
+  echo "Secondary repository remote already exists, updating URL..."
+  git remote set-url secondary ${SECONDARY_REPO}
+fi
 
-echo "Pushing to secondary..."
-git push secondary "$BRANCH"
+# Push to secondary repository
+echo "Pushing to secondary repository (${SECONDARY_REPO})..."
+git push -f secondary ${CURRENT_BRANCH}:${CURRENT_BRANCH}
 
-echo "Done!"
+echo "Successfully pushed to both repositories!"

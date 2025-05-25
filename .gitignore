@@ -4,6 +4,8 @@
 
 # Git scripts
 push-to-repos.sh
+dual-push.sh
+
 # dependencies
 /node_modules
 /.pnp
