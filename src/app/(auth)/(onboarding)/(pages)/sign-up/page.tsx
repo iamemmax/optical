@@ -22,7 +22,9 @@ export interface resetprop {
 
 const ForgetPassword = () => {
   const [step, setStep] = useState(1);
-  // const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
+  const [bvn, setBvn] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("")
  
 
   const pageVariants = {
@@ -43,8 +45,10 @@ const ForgetPassword = () => {
           transition={{ duration: 0.4 }}
           variants={pageVariants}
         >
-        <UserSignupDetails  
-            onNext={() => setStep(2)}/>
+        <UserSignupDetails 
+        setEmail={setEmail} 
+        setPhoneNumber={setPhoneNumber}
+            onNext={() => setStep(2)} />
         </motion.div>
       )}
       {step === 2 && (
@@ -58,6 +62,7 @@ const ForgetPassword = () => {
           variants={pageVariants}
         >
          <UserBvnDetails   
+         setBvn={setBvn}
          onNext={() => setStep(3)}
          onPrev={() => setStep(1)}
          />
@@ -74,6 +79,8 @@ const ForgetPassword = () => {
           variants={pageVariants}
         >
           <UserOtpVerification
+          bvn_number={bvn}
+          email={email}
            onNext={() => setStep(4)}
            onPrev={() => setStep(2)}
           />
@@ -90,6 +97,7 @@ const ForgetPassword = () => {
           variants={pageVariants}
         >
           <FacialVerification
+           email={email}
            onNext={() => setStep(5)}
            onPrev={() => setStep(3)}
           />
@@ -107,6 +115,8 @@ const ForgetPassword = () => {
         >
           
         <CreateWidthralPin
+        email={email}
+        phone_number={phoneNumber}
          onNext={() => setStep(6)}
          onPrev={() => setStep(4)}
         />
@@ -124,6 +134,7 @@ const ForgetPassword = () => {
         >
         
       <CreatePasswordDetails
+      email={email}
        onNext={() => setStep(7)}
        onPrev={() => setStep(5)}
       />

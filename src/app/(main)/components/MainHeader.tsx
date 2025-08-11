@@ -6,10 +6,15 @@ import RightArrowIcon from "@/app/icons/RightArrow";
 import { Button, LinkButton } from "@/components/core";
 import { motion, AnimatePresence } from "framer-motion";
 import { toggleBodyScroll } from '@/utils/inputs';
+import { useActivePath } from '@/utils/navigation';
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/authentication";
+import { useQueryClient } from "react-query";
 
 export const MainHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const isActive = useActivePath();
 
   // Add scroll event listener
   useEffect(() => {
@@ -90,12 +95,19 @@ export const MainHeader = () => {
       },
     },
   };
-
+  const queryClient = useQueryClient()
+  const { replace } = useRouter();
+  const { authDispatch,authState } = useAuth();
+ const handleLogOut = () => {
+    if (authDispatch) authDispatch({ type: 'LOGOUT' });
+    queryClient.clear();
+    replace('/login');
+  };
   return (
-    <div className="relative  w-full">
+    <div className="relative w-full !z-[99999999999999999]">
       {/* Desktop Header */}
       <motion.header 
-        className={`hidden fixed w-full bg-blue-900 px-4 md:px-[2rem] xl:px-[4.5rem] lg:flex justify-between items-center py-6 transition-all duration-300 ${
+        className={`hidden fixed w-full !z-[99999999999999999] bg-blue-900 px-4 md:px-[2rem] xl:px-[4.5rem] lg:flex justify-between items-center py-6 transition-all duration-300 ${
           scrolled ? 'bg-opacity-95 backdrop-blur-sm shadow-lg' : 'bg-opacity-0'
         }`}
         initial={{ backgroundColor: "rgba(30, 58, 138, 0)" }}
@@ -116,7 +128,9 @@ export const MainHeader = () => {
             {navlinks.map((link, index) => (
               <li key={index}>
                 <LinkButton
-                  className="text-white bg-transparent font-outfit text-base p-0 font-normal"
+                  className={`text-white bg-transparent font-outfit text-base p-0 font-normal relative ${
+                    isActive(link.href) ? ' after:content-[""] after:absolute after:bottom-[-6px] after:left-0 after:w-full after:h-[2px] after:bg-white' : ''
+                  }`}
                   href={link.href}
                 >
                   {link.title}
@@ -126,6 +140,13 @@ export const MainHeader = () => {
           </ul>
         </nav>
 
+{
+  authState?.isAuthenticated ?  <Button className="bg-white text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center px-6 py-[0.625rem] font-outfit"
+  onClick={handleLogOut}
+  >
+        Logout
+        
+        </Button> :
         <Button className="bg-white text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center px-6 py-[0.625rem] font-outfit">
           Get Started{" "}
           <svg
@@ -143,13 +164,14 @@ export const MainHeader = () => {
             />
           </svg>
         </Button>
+}
       </motion.header>
 
       {/* Mobile Header */}
       <motion.header 
         className={`flex justify-between lg:hidden fixed w-full bg-blue-900 px-4 md:px-[2rem] xl:px-[4.5rem] pt-[1rem] items-center py-6 pr-11 transition-all duration-300 ${
           scrolled ? 'bg-opacity-95 backdrop-blur-sm shadow-lg' : 'bg-opacity-0'
-        } ${menuOpen ? '!z-[9999999999999]' : 'z-[9999999'}`}
+        } ${menuOpen ? '!z-[999999999999999]' : 'z-[9999999'}`}
         initial={{ backgroundColor: "rgba(30, 58, 138, 0)" }}
         animate={{ 
           backgroundColor: scrolled ? "rgba(30, 58, 138, 0.95)" : "rgba(30, 58, 138, 0)",
@@ -259,17 +281,22 @@ export const MainHeader = () => {
                     className="my-4 overflow-hidden"
                   >
                     <LinkButton
-                      className="text-white font-outfit bg-transparent text-lg font-normal py-2 relative group flex items-center"
+                      className={`text-white font-outfit bg-transparent text-lg font-normal py-2 relative group flex items-center ${
+                        isActive(link.href) ? 'after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white' : ''
+                      }`
+                    }
                       href={link.href}
                       onClick={() => setMenuOpen(false)}
                     >
                       <span className="relative">
                         {link.title}
-                        <motion.span
-                          className="absolute bottom-0 left-0 w-0 h-0.5 bg-white"
-                          whileHover={{ width: "100%" }}
-                          transition={{ duration: 0.2 }}
-                        />
+                        {!isActive(link.href) && (
+                          <motion.span
+                            className="absolute bottom-0 left-0 w-0 h-0.5 bg-white"
+                            whileHover={{ width: "100%" }}
+                            transition={{ duration: 0.2 }}
+                          />
+                        )}
                       </span>
                     </LinkButton>
                   </motion.li>

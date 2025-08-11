@@ -9,8 +9,8 @@ import UserGroupIcon from "@/app/icons/UserGroupIcon";
 import CheckIcon from "@/app/icons/CheckIcon";
 import NetworkIcon from "@/app/icons/NetworlIcon";
 import GetReadyBanner from "../components/GetReadyBanner";
-import { TopMarquee } from "../about/page";
 import DebounceInput from "../components/util/DebounceInput";
+import TopMarquee from "../components/TopMaquee";
 
 
 const bannerItemArray = [

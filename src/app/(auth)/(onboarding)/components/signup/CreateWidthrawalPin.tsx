@@ -1,63 +1,81 @@
-import {  createWidthrawalPin } from "@/app/schema/SignupValidation";
+import { createWidthrawalPin } from "@/app/schema/SignupValidation";
 import React, { SetStateAction } from "react";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PinInput from "react-pin-input";
-import { Button, LinkButton } from "@/components/core";
+import { Button, ErrorModal, LinkButton } from "@/components/core";
 
 import useIsMobile from "@/hooks/UseMobile";
+import { useSetWidthrawalPin } from "../../api/sign-up/setWidthrawalPin";
+import { useErrorModalState } from "@/hooks";
+import { formatAxiosErrorMessage } from "@/utils";
+import { AxiosError } from "axios";
 
 interface prop {
+   email: string
+  phone_number: string;
   onNext: (value: SetStateAction<number>) => void;
   onPrev: (value: SetStateAction<number>) => void;
 }
 
 export type UserWidrawalDetailsValue = z.infer<typeof createWidthrawalPin>;
 
-const CreateWidthralPin = ({onNext}: prop) => {
+const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
+  const {
+    isErrorModalOpen,
+    setErrorModalState,
+    openErrorModalWithMessage,
+    errorModalMessage,
+  } = useErrorModalState();
+  const { mutate: handleSetpin } = useSetWidthrawalPin();
   const {
     control,
     handleSubmit,
-    register,
     setValue,
     formState: { errors, isValid },
   } = useForm<UserWidrawalDetailsValue>({
     resolver: zodResolver(createWidthrawalPin),
     defaultValues: {
       pin: "",
-     
     },
     mode: "onChange",
   });
 
-  const onSubmit =()=>{
-    if(isValid){
-        onNext(6)
-
+  const onSubmit = ({ pin }: UserWidrawalDetailsValue) => {
+    if (isValid) {
+      handleSetpin(
+        {
+          email,
+          phone_number,
+          pin,
+        },
+        {
+          onSuccess: () => {
+            onNext(6); // Move to next step only on success
+          },
+          onError: (error) => {
+            const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+            openErrorModalWithMessage(String(errorMessage));
+          },
+        }
+      );
     }
-  }
+  };
 
-
-  
   // mobile responsiveness
   const isMobile = useIsMobile();
-
-
-  const handleResendOtp = () => {
-
-  }
   const handleComplete = (pin: string) => {
-
-  }
+    setValue("pin", pin);
+  };
   return (
     <div className="text-white relative border-[.0187rem] py-6 xl:py-[4.5rem]  border-[#4649E5] px-6 md:px-[50px] 2xl:px-[6.1875rem] rounded-[1.25rem]">
       <div className="">
         <h2 className="text-white font-verdana font-bold text-[1.25rem] xl:text-[1.75rem]">
-        Withdrawal Pin
+          Withdrawal Pin
         </h2>
         <p className="font-outfit max-xxscren:text-xs text-sm xl:text-base text-white text-opacity-70 max-w-[250px] lg:max-w-[380px] font-light">
-        Create your unique pin for withdrawal.
+          Create your unique pin for withdrawal.
         </p>
         <div className="absolute max-xxscren:right-3 right-10 xl:right-16 top-14">
           <p className="font-outfit font-semibold text-white text-xs xl:text-base">
@@ -66,12 +84,9 @@ const CreateWidthralPin = ({onNext}: prop) => {
         </div>
       </div>
 
-<form onSubmit={handleSubmit(onSubmit)} className="max-w-[22.5rem]">
-      <div className="mt-[2.625rem]">
-    
-    
-          
-        <div className="mt-3 ">
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-[22.5rem]">
+        <div className="mt-[2.625rem]">
+          <div className="mt-3 ">
             <Controller
               name="pin"
               control={control}
@@ -83,9 +98,9 @@ const CreateWidthralPin = ({onNext}: prop) => {
                   initialValue=""
                   inputFocusStyle={{
                     border: "3px solid #02010D",
-                    outline:"none",
+                    outline: "none",
                     background: "#fff",
-                    color:"black",
+                    color: "black",
                     boxShadow: "0 0 0 0.5px #fff, 0 0 0 1.8px #fff",
                   }}
                   inputMode="number"
@@ -98,32 +113,50 @@ const CreateWidthralPin = ({onNext}: prop) => {
                     width: isMobile ? "2.7rem" : "3.375rem",
                     height: isMobile ? "2.7rem" : "3.375rem",
                   }}
-                  length={4}
+                  length={6}
                   style={{
                     display: "flex",
-                    color:"black",
+                    color: "black",
                     flexWrap: "nowrap",
                     gap: isMobile ? "0.4rem" : "1rem",
                     margin: "auto",
                   }}
                   type="numeric"
-                  secret 
+                  secret
                   onComplete={handleComplete}
-
                 />
               )}
             />
           </div>
-       
-     {/* <Countdown onTimeUp={handleTimeUp} reset={resetTimer} /> */}
- 
-            </div>
-<div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
-    <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm " type="submit">Create</Button>
-    <LinkButton className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm " href={"/"} variant={"outlined"}>Skip</LinkButton>
-</div>
 
-</form>
+          {/* <Countdown onTimeUp={handleTimeUp} reset={resetTimer} /> */}
+        </div>
+        <div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
+          <Button
+            className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm "
+            type="submit"
+          >
+            Create
+          </Button>
+          <LinkButton
+            className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm "
+            href={"/"}
+            variant={"outlined"}
+          >
+            Skip
+          </LinkButton>
+        </div>
+      </form>
+
+      <ErrorModal
+        isErrorModalOpen={isErrorModalOpen}
+        setErrorModalState={() => {
+          setErrorModalState(false);
+        }}
+        subheading={
+          errorModalMessage || "Please check your inputs and try again."
+        }
+      ></ErrorModal>
     </div>
   );
 };

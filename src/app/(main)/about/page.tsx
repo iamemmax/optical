@@ -10,7 +10,8 @@ import CheckIcon from "@/app/icons/CheckIcon";
 import NetworkIcon from "@/app/icons/NetworlIcon";
 import GetReadyBanner from "../components/GetReadyBanner";
 
-export const TopMarquee = () => {
+// Move TopMarquee inside the component or make it a separate component file
+const TopMarquee = () => {
   const [width, setWidth] = useState(0);
   const marqueeRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -79,6 +80,7 @@ export const TopMarquee = () => {
     </motion.div>
   );
 };
+
 const AboutPage = () => {
   const bannerItemArray = [
     {
@@ -140,7 +142,7 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="overflow-y-auto  ">
+    <div className="overflow-y-auto  z-50">
       {/* Hero Section */}
 
       <div className="">

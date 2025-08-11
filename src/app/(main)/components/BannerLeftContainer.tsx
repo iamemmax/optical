@@ -1,4 +1,5 @@
 import CheckIcon from "@/app/icons/CheckIcon";
+import ContactSales from "@/app/icons/ContactSales";
 import MoneyIcon from "@/app/icons/MoneyIcon";
 import PlayIcon from "@/app/icons/PlayIcon";
 import RightArrowIcon from "@/app/icons/RightArrow";
@@ -45,7 +46,7 @@ const BannerLeftContainer = () => {
           Get Started <RightArrowIcon color="#fff" background="#2B3AA6"/>
         </LinkButton>
         <Button className="bg-transparent max-xxscren:text-xs text-sm border-white text-white  border-opacity-60 rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center 2xl:px-6 px-3 md-px-4 py-[0.625rem] font-outfit" variant={"outlined"}>
-        See how it works <PlayIcon />
+       Contact Sales <ContactSales/>
         </Button>
         </div>
         <div className="max-sm:hidden">

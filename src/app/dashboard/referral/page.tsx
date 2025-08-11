@@ -1,5 +1,5 @@
 "use client"
-import { UserData } from '@/app/(auth)/(onboarding)/misc/types';
+// import { UserData } from '@/app/(auth)/(onboarding)/misc/types';
 import CopyIcon from '@/app/icons/(dashboard)/CopyIcon';
 import ReferralIcon1 from '@/app/icons/(dashboard)/ReferralIcon1';
 import ReferralIcon2 from '@/app/icons/(dashboard)/ReferralIcon2';
@@ -10,6 +10,7 @@ import React, { useState } from 'react'
 import Select, { StylesConfig } from "react-select";
 import ReferalTable from '../(dashboard)/components/referral/ReferalTable';
 import WithdrawalModal from '../(dashboard)/components/referral/WithdrawalModal';
+import { UserDataTypes } from '@/app/(auth)/(onboarding)/misc/types';
 
 type OptionType = {
   label: string;
@@ -17,7 +18,7 @@ type OptionType = {
 }
 
 const Page = () => {
-    const [userData, setUserData] = useState<UserData | null>(null);
+    const [userData, setUserData] = useState<UserDataTypes | null>(null);
     const [selectedReferralOption, setSelectedReferralOption] = useState<OptionType | null>(null);
     const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
     
@@ -210,11 +211,11 @@ const Page = () => {
         <div className="border-[0.5px] border-[#4453DD] p-4 2xl:p-6 rounded-10 flex flex-col gap-2" key={idx}>
            <div className="flex items-center gap-2">
             <div className="flex items-center justify-center h-8 w-8 rounded-full border-[0.5px] border-[#4453DD]"> {card?.icon}</div>
-            <p className='font-outfit text-white text-xs'>{card?.title}</p>
+            <p className='font-outfit text-white text-sm'>{card?.title}</p>
            </div>
            <h2 className='font-outfit text-white text-xl font-bold'>{card?.count}</h2>
            <div className="">
-            <p className='font-outfit text-[#00FF31] text-xs'>{card?.percentage} <span className='text-white/70 pl-1'>{ card?.rate}</span></p>
+            <p className='font-outfit text-[#00FF31] text-sm'>{card?.percentage} <span className='text-white/70 pl-1'>{ card?.rate}</span></p>
            </div>
         </div>
     ))

@@ -11,6 +11,7 @@ import SettingsIcon from '@/app/icons/(dashboard)/SettingsIcon';
 import TradingIcon from '@/app/icons/(dashboard)/TrandingIcon';
 import TransactionIcon from '@/app/icons/(dashboard)/TransactionIcon';
 import { useActivePath } from '@/utils/navigation';
+import InvestmentIcon from '@/app/icons/(dashboard)/InvestmentIcon';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -22,41 +23,51 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
   
   const navLinks = [
     {
-      title: "Home",
-      href: "/",
-      icon: <HomeIcon />
+        title:"Home",
+        href:"/",
+        icon:<HomeIcon/>
     },
     {
-      title: "Dashboard",
-      href: "/dashboard",
-      icon: <DashboardIcon />
+        title:"Dashboard",
+        href:"/dashboard",
+        icon:<DashboardIcon/>
     },
     {
-      title: "Transaction",
-      href: "/dashboard/transaction",
-      icon: <TransactionIcon width={25} height={30} />
+        title:"Transaction",
+        href:"/dashboard/transactions",
+        icon:<TransactionIcon width={25} height={30}/>
     },
     {
-      title: "Trading Signal",
-      href: "/dashboard/trading-signal",
-      icon: <TradingIcon />
+        title:"Trading Signal",
+        href:"/dashboard/trading-signal",
+        icon:<TradingIcon/>
     },
     {
-      title: "History (Graph)",
-      href: "/",
-      icon: <HistoryIcon />
+        title:"Investment",
+        href:"/dashboard/investment",
+        icon:<InvestmentIcon/>
+    },
+    // {
+    //     title:"History (Graph)",
+    //     href:"/",
+    //     icon:<HistoryIcon/>
+    // },
+    {
+        title:"Referral",
+        href:"/dashboard/referral",
+        icon:<HistoryIcon/>
     },
     {
-      title: "Profile",
-      href: "/dashboard/profile",
-      icon: <ProfileIcon />
+        title:"Profile",
+        href:"/dashboard/profile",
+        icon:<ProfileIcon/>
     },
     {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: <SettingsIcon />
+        title:"Settings",
+        href:"/dashboard/settings",
+        icon:<SettingsIcon/>
     },
-  ];
+  ]
 
   return (
     <AnimatePresence>

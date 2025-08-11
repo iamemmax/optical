@@ -9,10 +9,10 @@ import UserGroupIcon from "@/app/icons/UserGroupIcon";
 import CheckIcon from "@/app/icons/CheckIcon";
 import NetworkIcon from "@/app/icons/NetworlIcon";
 import GetReadyBanner from "../components/GetReadyBanner";
-import { TopMarquee } from "../about/page";
 import { LinkButton } from "@/components/core";
 import RightArrowIcon from "@/app/icons/RightArrow";
 import ContactForm from "./ContactForm";
+import TopMarquee from "../components/TopMaquee";
 
 const ContactPage = () => {
   const bannerItemArray = [

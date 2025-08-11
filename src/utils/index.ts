@@ -108,21 +108,71 @@ export const formatAxiosErrorMessage = (
     return `${error.message}. Please check your internet connection.`;
   }
 
-  const errorMessage = Object.values(error?.response?.data).flat();
+  // Handle response data errors (including 400 errors)
+  if (error?.response?.data) {
+    const data = error.response.data;
 
-  if (Array.isArray(errorMessage)) {
-    const allMessages = errorMessage
-      //@ts-expect-error blablabla
-      .filter((m) => isNaN(m) && typeof m === "string")
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-expect-error
-      .map((m) => capitalizeFirstLetter(m))
-      .join(". ");
+    // Check for direct message property
+    if (data.message && typeof data.message === 'string') {
+      return capitalizeFirstLetter(data.message);
+    }
 
-    return `${allMessages}`;
+    // Check for nested error.message property
+    if (data.error?.message && typeof data.error.message === 'string') {
+      return capitalizeFirstLetter(data.error.message);
+    }
+
+    // Check for errors array with messages
+    if (Array.isArray(data.errors)) {
+      //@ts-ignore
+      const messages = data.errors?.filter(err => err.message && typeof err.message === 'string').map(err => capitalizeFirstLetter(err.message));
+      if (messages.length > 0) {
+        return messages.join('. ');
+      }
+    }
+
+    // Recursively search for any 'message' property in the response data
+    const findMessage = (obj: any): string | null => {
+      if (typeof obj === 'string') return obj;
+      if (typeof obj !== 'object' || obj === null) return null;
+      
+      if (obj.message && typeof obj.message === 'string') {
+        return obj.message;
+      }
+      
+      for (const value of Object.values(obj)) {
+        const found = findMessage(value);
+        if (found) return found;
+      }
+      
+      return null;
+    };
+
+    const foundMessage = findMessage(data);
+    if (foundMessage) {
+      return capitalizeFirstLetter(foundMessage);
+    }
+
+    // Fallback: process all string values as before
+    const errorMessage = Object.values(data).flat();
+    if (Array.isArray(errorMessage)) {
+      const allMessages = errorMessage
+        //@ts-expect-error blablabla
+        .filter((m) => isNaN(m) && typeof m === "string")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
+        .map((m) => capitalizeFirstLetter(m))
+        .join(". ");
+
+      if (allMessages) {
+        return allMessages;
+      }
+    }
   }
-};
 
+  // Fallback for any other errors
+  return error?.message || "An unexpected error occurred";
+};
 /**
  * @param date The date to be formatted.
  * @param withTime A boolean determining whether or not the date is returned with a time value.

@@ -2,7 +2,7 @@ import React from "react";
 import { Button, LinkButton } from "@/components/core";
 import AppStore from "./landing-images/AppStore";
 import PlayStore from "./landing-images/PlayStore";
-import DoublePhoneImages from "./landing-images/PhoneImages";
+import OpticalPhoneImage from "@/app/icons/OpticalPhoneApp";
 
 const GetAppSection = () => {
   return (
@@ -15,7 +15,7 @@ const GetAppSection = () => {
           <p className="text-white text-opacity-70 font-outfit md:text-[1.1rem] xl:text-[1.3rem] 2xl:text-[2rem]  xl:max-w-[80%]   font-normal">
             You can download the mobile app on Google Play store or Apple store{" "}
           </p>
-          <div className="md:py-6 py-3 flex items-center  gap-4">
+          <div className="md:py-6 py-3 flex items-center mt-10  gap-4">
             <LinkButton href={"#"} className="p-0 bg-transparent">
               <AppStore className="max-sm:w-[120px]" />
             </LinkButton>
@@ -26,7 +26,7 @@ const GetAppSection = () => {
         </div>
         <div className="relative max-md:hidden ">
           <div className=" absolute -top-[7.6rem] 2xl:top-[-6rem] right-0">
-            <DoublePhoneImages  className="w-[100%] h-[430px]"/>        
+            <OpticalPhoneImage  />        
               </div>
         </div>
       </div>

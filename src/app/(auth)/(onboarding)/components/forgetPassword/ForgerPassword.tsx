@@ -1,21 +1,33 @@
 "use client";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { z } from "zod";
 import {  useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Button, LinkButton } from "@/components/core";
+import { Button, ErrorModal, LinkButton } from "@/components/core";
 
 import { forgetPasswordUserSchema } from "@/app/schema/LoginSchema";
+import { useRequestPasswordReset } from "../../api/forget-password/requestPasswordReset";
+import { formatAxiosErrorMessage } from "@/utils";
+import { AxiosError } from "axios";
+import { useErrorModalState } from "@/hooks";
+import toast from "react-hot-toast";
+import { SmallSpinner } from "@/icons/core";
 export type forgetPasswordDetailsValue = z.infer<typeof forgetPasswordUserSchema>;
 
 interface Prop{
+  setEmail: Dispatch<SetStateAction<string>>
     onNext: () => void
   }
-const ForgetPassword = ({onNext}:Prop) => {
-
+const ForgetPassword = ({onNext,setEmail}:Prop) => {
+ const {
+      isErrorModalOpen,
+      setErrorModalState,
+      openErrorModalWithMessage,
+      errorModalMessage,
+    } = useErrorModalState();
   const {
-    control,
+  
     handleSubmit,
     register,
     formState: { errors, isValid },
@@ -27,10 +39,24 @@ const ForgetPassword = ({onNext}:Prop) => {
     mode: "onChange",
   });
 
+  const {mutate:handleResetPassword, isLoading}=useRequestPasswordReset()
   // const tokenStorage =tokenStorage()
-  const onSubmit = (data:forgetPasswordDetailsValue) => {
+  const onSubmit = ({email}:forgetPasswordDetailsValue) => {
     if(isValid){
-        onNext()
+      setEmail(email)
+      handleResetPassword({
+        email
+      },{
+        
+                  onSuccess: () => {
+                    onNext();
+                    toast.success("Password reset link sent to your email")
+                  },
+                  onError: (error) => {
+                    const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+                    openErrorModalWithMessage(String(errorMessage));
+                  },
+      })
     }
   }
 
@@ -69,8 +95,8 @@ const ForgetPassword = ({onNext}:Prop) => {
 
         {/* Submit Button + Signup Link */}
         <div className="mt-[2rem] xl:mt-[4.5rem] flex flex-col pb-[1.75rem] xl:pb-[2.75rem]">
-          <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm">
-          Continue
+          <Button className="w-full flex justify-center items-center gap-x-3 bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm">
+          Continue {isLoading && <SmallSpinner color="blue"/>}
           </Button>
           <LinkButton
             className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm"
@@ -80,6 +106,16 @@ const ForgetPassword = ({onNext}:Prop) => {
           </LinkButton>
         </div>
       </form>
+
+      <ErrorModal
+              isErrorModalOpen={isErrorModalOpen}
+              setErrorModalState={() => {
+                setErrorModalState(false);
+              }}
+              subheading={
+                errorModalMessage || "Please check your inputs and try again."
+              }
+            ></ErrorModal>
     </div>
   );
 };

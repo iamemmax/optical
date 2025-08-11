@@ -1,22 +1,37 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Button, LinkButton } from "@/components/core";
+import { Button, ErrorModal, LinkButton } from "@/components/core";
 import EyeIcon from "@/app/icons/EyeIcon";
 import { loginUserSchema } from "@/app/schema/LoginSchema";
 import { tokenStorage } from "../../misc/utils";
+import { useLogin } from "../../api/login";
+import { useErrorModalState } from "@/hooks";
+import { formatAxiosErrorMessage } from "@/utils";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/authentication";
+import { SmallSpinner } from "@/icons/core";
 
 export type LoginDetailsValue = z.infer<typeof loginUserSchema>;
 
 const LoginPage = () => {
   const [passwordShown, setPasswordShown] = useState(false);
   const [keepMeLoggedIn, setKeepMeLoggedIn] = useState(false);
-
+ const router = useRouter();
+  const { authState } = useAuth();
+  const {mutate:handleLogin, isLoading}=useLogin()
   const togglePassword = () => setPasswordShown(!passwordShown);
-
+const {
+    isErrorModalOpen,
+    setErrorModalState,
+    openErrorModalWithMessage,
+    errorModalMessage,
+  } = useErrorModalState();
+ 
   const {
     control,
     handleSubmit,
@@ -27,11 +42,18 @@ const LoginPage = () => {
     resolver: zodResolver(loginUserSchema),
     defaultValues: {
       password: "",
-      phone_number: "",
+      email: "",
     },
     mode: "onChange",
   });
 
+  
+  // Watch for authentication state changes
+  useEffect(() => {
+    if (authState.isAuthenticated && !authState.isLoading) {
+      router.push("/dashboard");
+    }
+  }, [authState.isAuthenticated, authState.isLoading, router]);
   // const tokenStorage =tokenStorage()
   const onSubmit = (data: LoginDetailsValue) => {
     if (keepMeLoggedIn) {
@@ -39,13 +61,30 @@ const LoginPage = () => {
     } else {
       tokenStorage.clearLoginDetails();
     }
+
+    handleLogin({
+      password:data?.password,
+      email:data?.email,
+    },{
+      onSuccess:(data)=>{
+        if(data){
+          router.replace("/dashboard")
+        }
+      },
+      onError: (error) => {
+        const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+        openErrorModalWithMessage(String(errorMessage));
+      },
+    })
+
   };
 
+  
   useEffect(() => {
     // look for saved credenntials
     const token = tokenStorage.getSavedLoginDetails();
     if (token) {
-      setValue("phone_number", token?.phone_number);
+      setValue("email", token?.email);
       setValue("password", token?.password);
       setKeepMeLoggedIn(true);
     }
@@ -66,52 +105,20 @@ const LoginPage = () => {
         {/* Phone Number Input */}
         <div>
           <Label className="mb-1 block text-sm font-outfit text-[#fff]">
-            Phone Number*
+            Email*
           </Label>
           <div className="relative mt-[.25rem]">
-            <Controller
-              control={control}
-              name="phone_number"
-              render={({ field }) => (
-                <input
-                  {...field}
-                  className={`${
-                    errors?.phone_number
-                      ? "border border-red-700"
-                      : "border-[0.3px] border-[#696969]"
-                  } text-[#fff] text-xs outline-none h-[2.75rem]  md:h-[3.375rem] border-opacity-70 rounded-lg w-full px-6 bg-transparent`}
-                  id="account_no"
-                  placeholder="Enter your phone number"
-                  type="text"
-                  maxLength={11}
-                  onChange={(e) => {
-                    const validPhoneNumber = e.target.value.replace(
-                      /[^0-9]/g,
-                      ""
-                    );
-                    field.onChange(validPhoneNumber);
-                  }}
-                  onPaste={(e) => {
-                    const pastedValue = e.clipboardData.getData("text");
-                    const sanitizedValue = pastedValue
-                      .replace(/[^0-9]/g, "")
-                      .slice(0, 11);
-                    e.preventDefault();
-                    field.onChange(sanitizedValue);
-                  }}
-                  onInput={(e) => {
-                    const validPhoneNumber = e.currentTarget.value.replace(
-                      /[^0-9]/g,
-                      ""
-                    );
-                    field.onChange(validPhoneNumber);
-                  }}
-                />
-              )}
-            />
-            {errors?.phone_number && (
+            
+              <input
+            className={`${errors?.email ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] text-xs outline-none  h-[2.75rem]  md:h-[3.375rem] border-opacity-70 rounded-lg w-full px-6 bg-[#02010D]`}
+            placeholder="Enter your email"
+            type="text"
+            id={`email`}
+            {...register(`email`)}
+          />
+            {errors?.email && (
               <p className="text-red-700 text-xs mt-1">
-                {errors?.phone_number?.message}
+                {errors?.email?.message}
               </p>
             )}
           </div>
@@ -180,8 +187,9 @@ const LoginPage = () => {
 
         {/* Submit Button + Signup Link */}
         <div className="mt-[2rem] xl:mt-[4.5rem] flex flex-col pb-[1.75rem] xl:pb-[2.75rem]">
-          <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm">
+          <Button className="w-full bg-white text-[#2B3AA6] h-11 flex justify-center items-center gap-x-2 rounded-10 font-outfit text-sm">
             Login
+             {isLoading && <SmallSpinner color="blue"/>}
           </Button>
           <LinkButton
             className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm"
@@ -192,6 +200,19 @@ const LoginPage = () => {
           </LinkButton>
         </div>
       </form>
+
+
+
+      <ErrorModal
+        isErrorModalOpen={isErrorModalOpen}
+        setErrorModalState={() => {
+          setErrorModalState(false);
+        }}
+        subheading={
+          errorModalMessage ||
+          "Please check your inputs and try again."
+        }
+      ></ErrorModal>
     </div>
   );
 };

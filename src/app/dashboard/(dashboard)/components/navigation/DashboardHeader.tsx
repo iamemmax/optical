@@ -11,8 +11,8 @@ interface DashboardHeaderProps {
 
 const getPageTitle = (pathname: string): string => {
   const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
-  const lastSegment = pathSegments[pathSegments.length - 1];
-  return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
+  const lastSegment = pathSegments[pathSegments.length - 1]?.replace(/[-]/g," " );
+  return lastSegment?.charAt(0).toUpperCase() + lastSegment.slice(1);
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onMenuClick }) => {

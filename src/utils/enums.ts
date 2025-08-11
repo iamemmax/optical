@@ -16,3 +16,17 @@ export function createEnumFromOptions<T extends { value: V }, V>(
 
   return VALUES as [Option, ...Option[]];
 }
+
+
+export const formatValue = (value: number) => {
+  if (value >= 1_000_000_000_000) { // Trillions
+    return `${(value / 1_000_000_000_000).toFixed(1)}T`;
+  } else if (value >= 1_000_000_000) { // Billions
+    return `${(value / 1_000_000_000).toFixed(1)}B`;
+  } else if (value >= 1_000_000) { // Millions
+    return `${(value / 1_000_000).toFixed(1)}M`;
+  } else if (value >= 1_000) { // Thousands
+    return `${(value / 1_000).toFixed(1)}K`;
+  }
+  return value.toLocaleString();
+};

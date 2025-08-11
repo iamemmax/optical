@@ -24,8 +24,8 @@ const OnboardingLayout = ({
   }, []);
 
   return (
-    <div className={`w-full h-screen bg-[url('/images/homepage/landing-page-bg.svg')]  overflow-hidden grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] `}  style={{ height: 'var(--app-height)' }}>
-      <div className="w-full h-full bg-[#02010D]  flex flex-col overflow-hidden">
+    <div className={`w-full h-[100vh] bg-[url('/images/homepage/landing-page-bg.svg')]  overflow-hidden grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] `}  style={{ height: 'var(--app-height)' }}>
+      <div className="w-full h-[100vh] bg-[#02010D]  flex flex-col overflow-hidden">
         {/* Fixed header section */}
         <div className="flex justify-between   items-center w-full px-4 md:px-[2rem] xl:px-[4.5rem] py-4  xl:pt-[1rem]">
           <div>

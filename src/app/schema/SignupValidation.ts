@@ -1,14 +1,29 @@
 import { z } from "zod";
 export const signUpUserSchema = z.object({
-    first_name: z
-        .string()
-        .trim()
-        .min(1, { message: "Please enter the first name." }).refine(value => !/\d/.test(value), { message: "First name must not contain numbers" }),
-    last_name: z
-        .string()
-        .trim()
-        .min(1, { message: "Please enter the last name." }).refine(value => !/\d/.test(value), { message: "Last name must not contain numbers" }),
-    referral: z
+    full_name: z
+  .string()
+  .trim()
+  .min(1, { message: "Please enter your full name." })
+  .refine(value => !/\d/.test(value), { 
+    message: "Full name must not contain numbers" 
+  })
+  .refine(value => {
+    const names = value.trim().split(/\s+/);
+    return names.length >= 2;
+  }, { 
+    message: "Please enter at least first and last name" 
+  })
+  .refine(value => {
+    const names = value.trim().split(/\s+/);
+    return names.every(name => name.length >= 1);
+  }, { 
+    message: "Each name must be at least 2 characters long" 
+  }),
+    // last_name: z
+    //     .string()
+    //     .trim()
+    //     .min(1, { message: "Please enter the last name." }).refine(value => !/\d/.test(value), { message: "Last name must not contain numbers" }),
+    referall_code: z
         .string()
         .trim()
         .optional(),
@@ -29,7 +44,7 @@ export const signUpUserSchema = z.object({
   });
 export const signUpUserBvnSchema = z.object({
 
-    bvn: z
+    bvn_number: z
     .string()
     .min(11, { message: "bvn should be at least 11 digits" }),
    
@@ -52,7 +67,7 @@ export const createWidthrawalPin = z.object({
 
   pin: z
   .string()
-  .length(4, "pin must be exactly 4 digits")
+  .length(6, "pin must be exactly 4 digits")
   .regex(/^\d+$/, "otp must be numeric"),
    
   });
@@ -73,14 +88,14 @@ export const createPasswordSchema = z.object({
             "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
         }
       ),
-    confirm_password: z
+    password_2: z
       .string({ required_error: "Please enter your password." })
       .trim()
       .min(1, { message: "Password must be at least 1 characters." }),
   })
-  .refine((data) => data?.password === data?.confirm_password, {
+  .refine((data) => data?.password === data?.password_2, {
     message: "Passwords don't match",
-    path: ["confirm_password"],
+    path: ["password_2"],
   
    
   });

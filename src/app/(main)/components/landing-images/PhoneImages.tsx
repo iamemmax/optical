@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SVGProps } from "react";
-const DoublePhoneImages = (props: SVGProps<SVGSVGElement>) => (
+const DoublePhone = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width={604}
     height={548}
@@ -445,4 +445,4 @@ const DoublePhoneImages = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 );
-export default DoublePhoneImages;
+export default DoublePhone;

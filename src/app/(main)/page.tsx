@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { MainHeader } from "./components/MainHeader";
+// import { MainHeader } from "./components/MainHeader";
 import BannerLeftContainer from "./components/BannerLeftContainer";
 import Marquee from "./components/Marquee";
 import AboutSection from "./components/AboutSection";
@@ -22,12 +22,12 @@ const Page = () => {
       {/* scroll-smooth snap-y snap-mandatory */}
 
       <motion.section
-        className="relative snap-start max-md:mt-[3rem]  lg:mt-[4rem] mb-[2rem]     md:px-[2rem] xl:px-[4.5rem]  flex flex-col justify-between   "
+        className="relative snap-start max-md:mt-[3rem]  lg:mt-[4rem] mb-[2rem]     md:px-[2rem] xl:px-[4.5rem]  flex flex-col    "
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className=" bg-[url('/images/homepage/landing-banner.svg')] flex justify-center md:h-screen bg-no-repeat bg-cover rounded-r-[3.125rem] max-md:py-10  bg-[#02010d] bg-opacity-50">
+        <div className=" bg-[url('/images/homepage/landing-banner.svg')] flex-col flex justify-center py-[7rem] bg-no-repeat bg-cover rounded-[3.125rem]  max-md:py-10  bg-[#02010d] bg-opacity-50">
         <div className="grid grid-cols-1  lg:grid-cols-[1.5fr_1fr] relative z-10 overflow-x-hidden  overflow-hidden first-line: flex-1">
           <div className=" max-lg:py-16  flex justify-center relative items-center md:px-[2rem] xl:px-[4.5rem] ">
             <BannerLeftContainer />
@@ -36,13 +36,14 @@ const Page = () => {
          <LandingPageBanner />
           </div>
         </div>
-
         </div>
-      </motion.section>
+ <div className=" -mt-10 ">
+        <Marquee />
+      </div>
 
       {/* Section 2 - About */}
       <motion.section
-        className="snap-start min-h-screen   flex items-center  bg-[url('/images/homepage/landing-page-bg-2.svg')] z-[999999] bg-[position:top]  bg-no-repeat bg-cover  px-4 md:px-[2rem] xl:px-[4.5rem] justify-center"
+        className="snap-start py-[5rem]   flex items-center  bg-[url('/images/homepage/landing-page-bg-2.svg')]  bg-[position:top]  bg-no-repeat bg-cover  px-4 md:px-[2rem] xl:px-[4.5rem] justify-center"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -122,10 +123,10 @@ const Page = () => {
       >
         <Footer />
       </motion.section>
+      
+      </motion.section>
 
-      <div className="fixed bottom-0 lg:bottom-0 2xl:-bottom-0 left-0 w-full z-[99999] shadow-md">
-        <Marquee />
-      </div>
+     
     </div>
   );
 };

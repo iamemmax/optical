@@ -4,19 +4,31 @@ import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Button } from "@/components/core";
+import { Button, ErrorModal } from "@/components/core";
 import CopyIcon from "@/app/icons/CopyIcon";
-import { useClipboard } from "@/hooks";
+import { useClipboard, useErrorModalState } from "@/hooks";
 import EyeIcon from "@/app/icons/EyeIcon";
+import { useCreatePassword } from "../../api/sign-up/createPassword";
+import { formatAxiosErrorMessage } from "@/utils";
+import { AxiosError } from "axios";
+import { SmallSpinner } from "@/icons/core";
 
 interface prop {
+  email:string;
   onNext: (value: SetStateAction<number>) => void;
   onPrev: (value: SetStateAction<number>) => void;
 }
 
 export type UserPasswordDetailsValue = z.infer<typeof createPasswordSchema>;
 
-const CreatePasswordDetails = ({onNext,onPrev}: prop) => {
+const CreatePasswordDetails = ({onNext,email}: prop) => {
+   const {
+      isErrorModalOpen,
+      setErrorModalState,
+      openErrorModalWithMessage,
+      errorModalMessage,
+    } = useErrorModalState();
+  const {mutate:handleCreatePassword, isLoading} = useCreatePassword()
     const [passwordShown, setPasswordShown] = useState(false);
     const togglePassword = () => {
         setPasswordShown(!passwordShown);
@@ -32,15 +44,29 @@ const CreatePasswordDetails = ({onNext,onPrev}: prop) => {
     resolver: zodResolver(createPasswordSchema),
     defaultValues: {
       password: "",
-      confirm_password:""
+      password_2:""
      
     },
     mode: "onChange",
   });
 
-  const onSubmit =()=>{
+  const onSubmit =({password,password_2}:UserPasswordDetailsValue)=>{
     if(isValid){
-        onNext(7)
+handleCreatePassword({
+  email,
+  password,
+  password_2
+}, {
+          onSuccess: () => {
+            onNext(7);
+          },
+          onError: (error) => {
+            const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+            openErrorModalWithMessage(String(errorMessage));
+          },
+        })
+      
+        
     }
   }
   return (
@@ -112,7 +138,7 @@ const CreatePasswordDetails = ({onNext,onPrev}: prop) => {
                    htmlFor={``}
                  >
             Confirm Pasword*
-          </Label> <div className={` ${errors?.confirm_password ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}>
+          </Label> <div className={` ${errors?.password_2 ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}>
         
 
 
@@ -122,7 +148,7 @@ const CreatePasswordDetails = ({onNext,onPrev}: prop) => {
               // pattern="[0-9]*"
               placeholder="Enter password"
               type={passwordShown ? "text" : "password"}
-              {...register("confirm_password")}
+              {...register("password_2")}
             />
 
             {/* <div> */}
@@ -135,17 +161,27 @@ const CreatePasswordDetails = ({onNext,onPrev}: prop) => {
             </button>
             {/* </div> */}
           </div>
-          {errors?.confirm_password && (
+          {errors?.password_2 && (
               <p className="text-red-700 text-xs mt-1">
-                {errors?.confirm_password?.message}
+                {errors?.password_2?.message}
               </p>
             )}
       </div>
 <div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
-    <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm " type="submit">Verify</Button>
+    <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 flex justify-center items-center gap-x-3 font-outfit text-sm " type="submit">Verify {isLoading && <SmallSpinner color="blue" />}</Button>
 </div>
 
 </form>
+
+<ErrorModal
+        isErrorModalOpen={isErrorModalOpen}
+        setErrorModalState={() => {
+          setErrorModalState(false);
+        }}
+        subheading={
+          errorModalMessage || "Please check your inputs and try again."
+        }
+      ></ErrorModal>
     </div>
   );
 };

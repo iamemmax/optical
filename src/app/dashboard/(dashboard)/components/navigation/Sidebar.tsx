@@ -1,6 +1,7 @@
 import DashboardIcon from '@/app/icons/(dashboard)/DashboardIcon'
 import HistoryIcon from '@/app/icons/(dashboard)/HistoryIcon'
 import HomeIcon from '@/app/icons/(dashboard)/HomeIcon'
+import InvestmentIcon from '@/app/icons/(dashboard)/InvestmentIcon'
 import ProfileIcon from '@/app/icons/(dashboard)/ProfileIcon'
 import SettingsIcon from '@/app/icons/(dashboard)/SettingsIcon'
 import TradingIcon from '@/app/icons/(dashboard)/TrandingIcon'
@@ -29,7 +30,7 @@ const Sidebar = () => {
     },
     {
         title:"Transaction",
-        href:"/dashboard/transaction",
+        href:"/dashboard/transactions",
         icon:<TransactionIcon width={25} height={30}/>
     },
     {
@@ -38,10 +39,15 @@ const Sidebar = () => {
         icon:<TradingIcon/>
     },
     {
-        title:"History (Graph)",
-        href:"/",
-        icon:<HistoryIcon/>
+        title:"Investment",
+        href:"/dashboard/investment",
+        icon:<InvestmentIcon/>
     },
+    // {
+    //     title:"History (Graph)",
+    //     href:"/",
+    //     icon:<HistoryIcon/>
+    // },
     {
         title:"Referral",
         href:"/dashboard/referral",

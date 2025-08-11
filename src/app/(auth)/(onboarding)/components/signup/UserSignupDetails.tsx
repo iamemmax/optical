@@ -1,39 +1,67 @@
 import { signUpUserSchema } from "@/app/schema/SignupValidation";
-import React, { SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Button, LinkButton } from "@/components/core";
+import { Button, ErrorModal, LinkButton } from "@/components/core";
+import { useRegisterUser } from "../../api/sign-up/registerUser";
+import { AxiosError } from "axios";
+import { formatAxiosErrorMessage } from "@/utils";
+import { useErrorModalState } from "@/hooks";
+import { SmallSpinner } from "@/icons/core";
 
 interface prop {
+  setPhoneNumber: Dispatch<SetStateAction<string>>
+  setEmail: Dispatch<SetStateAction<string>>
   onNext: (value: SetStateAction<number>) => void;
 }
 
 export type UserSignupDetailsValue = z.infer<typeof signUpUserSchema>;
 
-const UserSignupDetails = ({onNext}: prop) => {
+const UserSignupDetails = ({setEmail, setPhoneNumber,onNext}: prop) => {
+  const {
+      isErrorModalOpen,
+      setErrorModalState,
+      openErrorModalWithMessage,
+      errorModalMessage,
+    } = useErrorModalState();
+  const {mutate:handleSignUpUser, isLoading} = useRegisterUser()
   const {
     control,
     handleSubmit,
     register,
-    setValue,
+    
     formState: { errors, isValid },
   } = useForm<UserSignupDetailsValue>({
     resolver: zodResolver(signUpUserSchema),
     defaultValues: {
       email: "",
-      first_name: "",
-      last_name: "",
+      full_name: "",
+    
       phone_number: "",
-      referral: "",
+      referall_code: "",
     },
     mode: "onChange",
   });
 
-  const onSubmit =()=>{
+  const onSubmit =({email,full_name,phone_number,referall_code}:UserSignupDetailsValue)=>{
     if(isValid){
-        onNext(2)
+      setEmail(email)
+      setPhoneNumber(phone_number)
+      // onNext(2)
+      handleSignUpUser({
+        email,full_name,phone_number,referall_code
+      },{
+        onSuccess:()=>{
+          onNext(2)
+
+        },
+        onError: (error) => {
+               const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+               openErrorModalWithMessage(String(errorMessage));
+             },
+      })
 
     }
   }
@@ -60,23 +88,23 @@ const UserSignupDetails = ({onNext}: prop) => {
             className="mb-1 block text-sm font-outfit text-[#fff]"
             htmlFor={``}
           >
-            FIrst Name*
+            Full Name*
           </Label>
           <input
-            className={`${errors?.first_name ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] text-xs outline-none border-opacity-70  h-[2.75rem] md:h-[3.375rem] rounded-lg w-full px-6 bg-[#02010D]`}
-            placeholder="Enter your first name"
+            className={`${errors?.full_name ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] text-xs outline-none border-opacity-70  h-[2.75rem] md:h-[3.375rem] rounded-lg w-full px-6 bg-[#02010D]`}
+            placeholder="Enter your full name"
             type="text"
-            id={`first_name`}
-            {...register(`first_name`)}
+            id={`full_name`}
+            {...register(`full_name`)}
           />
 
-          {errors?.first_name && (
+          {errors?.full_name && (
             <p className="text-red-700 text-xs mt-1">
-              {errors?.first_name?.message}
+              {errors?.full_name?.message}
             </p>
           )}
         </div>
-        <div className="mt-[.5rem]">
+        {/* <div className="mt-[.5rem]">
           <Label
             className="mb-1 block text-sm font-outfit text-[#fff]"
             htmlFor={``}
@@ -84,7 +112,7 @@ const UserSignupDetails = ({onNext}: prop) => {
             Last Name*
           </Label>
           <input
-            className={`${errors?.last_name ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] text-xs outline-none border-opacity-70  h-[2.75rem] md:h-[3.375rem] rounded-lg w-full px-6 bg-[#02010D]`}
+            className={`${errors?.last_name ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] font-outfit text-xs outline-none border-opacity-70  h-[2.75rem] md:h-[3.375rem] rounded-lg w-full px-6 bg-[#02010D]`}
             placeholder="Enter your last name"
             type="text"
             id={`last_name`}
@@ -96,7 +124,7 @@ const UserSignupDetails = ({onNext}: prop) => {
               {errors?.last_name?.message}
             </p>
           )}
-        </div>
+        </div> */}
         <div className="mt-4">
           <Label
             className="mb-1 block text-sm font-outfit text-[#fff]"
@@ -188,29 +216,41 @@ const UserSignupDetails = ({onNext}: prop) => {
             className="mb-1 block text-sm font-outfit text-[#fff]"
             htmlFor={`email`}
           >
-            Referral Code (Optional)
+            Referal Code (Optional)
           </Label>
           <input
-            className={`${errors?.referral ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] text-xs outline-none  h-[2.75rem]  md:h-[3.375rem] border-opacity-70 rounded-lg w-full px-6 bg-[#02010D]`}
-            placeholder="Enter referral code"
+            className={`${errors?.referall_code ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] text-xs outline-none  h-[2.75rem]  md:h-[3.375rem] border-opacity-70 rounded-lg w-full px-6 bg-[#02010D]`}
+            placeholder="Enter referal code"
             type="text"
-            id={`referral`}
-            {...register(`referral`)}
+            id={`referall_code`}
+            {...register(`referall_code`)}
           />
 
-          {errors?.referral && (
+          {errors?.referall_code && (
             <p className="text-red-700 text-xs mt-1">
-              {errors?.referral?.message}
+              {errors?.referall_code?.message}
             </p>
           )}
         </div>
       </div>
-<div className="mt-[4rem] flex flex-col pb-[2.75rem]">
-    <Button className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm ">Get Started</Button>
+<div className="mt-[3rem] flex flex-col pb-[2.75rem]">
+    <Button className="w-full bg-white text-[#2B3AA6] h-11 flex items-center justify-center gap-x-3  rounded-10 font-outfit text-sm ">Get Started {isLoading && <SmallSpinner color="blue" />} </Button>
     <LinkButton className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm " variant={"outlined"} href={"/login"}>Already have an account? <span className="font-normal">Login</span></LinkButton>
 </div>
 
 </form>
+
+
+<ErrorModal
+        isErrorModalOpen={isErrorModalOpen}
+        setErrorModalState={() => {
+          setErrorModalState(false);
+        }}
+        subheading={
+          errorModalMessage ||
+          "Please check your inputs and try again."
+        }
+      ></ErrorModal>
     </div>
   );
 };
