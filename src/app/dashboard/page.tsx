@@ -140,12 +140,12 @@ const Page = () => {
   const referralOption = [
     {
       label: "Referral code",
-      value: userData?.referral_code || "2436473",
+      value: userData?.referral_code || "",
       type: "copy",
     },
     {
       label: "Referral Links",
-      value: `https://www.libertylifeplus.com/plan?referral_code=${userData?.referral_code || "2436473"}`,
+      value: `https://www.libertylifeplus.com/plan?referral_code=${userData?.referral_code || ""}`,
       type: "copy",
     },
   ];

@@ -15,7 +15,7 @@ export interface resetprop {
 
 const ForgetPasswordPage = () => {
   const [step, setStep] = useState(1);
-  // const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
  
 
   const pageVariants = {
@@ -37,7 +37,8 @@ const ForgetPasswordPage = () => {
           variants={pageVariants}
         >
         <ForgetPassword  
-            onNext={() => setStep(2)}/>
+            onNext={() => setStep(2)}
+            setEmail={setEmail}/>
         </motion.div>
       )}
       {step === 2 && (

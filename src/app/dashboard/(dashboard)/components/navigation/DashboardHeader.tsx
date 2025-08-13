@@ -4,6 +4,7 @@ import { CaretDown } from '@/components/icons'
 import Image from 'next/image'
 import React from 'react'
 import { usePathname } from 'next/navigation'
+import { useUser } from '@/app/(auth)/(onboarding)/api/getUserDetails'
 
 interface DashboardHeaderProps {
   onMenuClick?: () => void;
@@ -16,6 +17,8 @@ const getPageTitle = (pathname: string): string => {
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onMenuClick }) => {
+
+  const user =useUser()
   return (
     <div className='flex justify-between items-center px-4 lg:px-[2.625rem] border-b-[.0187rem] border-[#4453DD] border-opacity-50 h-[4.375rem] md:h-[5.625rem] w-full'>
       <div className="flex items-center gap-4">
@@ -59,8 +62,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onMenuClick }) => {
         
         <div className="flex items-end gap-2">
           <div className="text-[#A6A6A6] font-verdana font-normal text-sm max-sm:hidden"> 
-            <h2 className='text-white font-verdana font-bold text-sm '>Annabelle Amapiano</h2>
-            <p className='text-white/70 font-outfit text-xxs font-medium'>annabelleamapiano@gmail.com</p>
+            <h2 className='text-white font-verdana font-bold text-sm '>{user?.data?.full_name ??""}</h2>
+            <p className='text-white/70 font-outfit text-xxs font-medium'>{user?.data?.email}</p>
           </div>
           <Button className='p-0 bg-transparent h-fit'><CaretDown/></Button>
         </div>
