@@ -17,17 +17,18 @@ import {
   Tooltip,
 } from "recharts";
 import { OptionType, selectStyle } from "@/utils/selectStyles";
-import { useGetTradingInvestmentDashboardRoiChart } from "@/app/dashboard/misc/api/investment/trading/fetchDashboardTradingInvestmentRoiChart";
-import { useGetInvestmentDashboardPortfolioChart } from "@/app/dashboard/misc/api/investment/trading/fetchInvestmentdashboardPotfolioChart";
 import { useTradingInvestmentDashboardAnalyticsChart } from "@/app/dashboard/misc/api/investment/trading/fetchInvestmentDashboardAnalyticsChart";
 import { addCommasToNumber } from "@/utils";
+import { useGetInvestmentOnlendingPortfolioChart } from "@/app/dashboard/misc/api/investment/onlending/fetchInvestmentOnlendingPotfolioChart";
+import { useGetOnlendingInvestmentDashboardRoiChart } from "@/app/dashboard/misc/api/investment/onlending/fetchDashboardOnlendingInvestmentRoiChart";
+import { useOnlendingInvestmentDashboardAnalyticsChart } from "@/app/dashboard/misc/api/investment/onlending/fetchInvestmentOnlendingAnalyticsChart";
 
 type CustomTooltipProps = {
   active?: boolean;
   payload?: any;
   label?: string;
 };
-const InvestmentChart = () => {
+const OnlendingInvestmentChart = () => {
   const filterStatus: OptionType[] = [
     { label: "Today", value: "today" },
     { label: "This Week", value: "this_week" },
@@ -40,11 +41,11 @@ const InvestmentChart = () => {
   const [selectedOption, setSelectedOption] = useState(filterStatus[0]?.value);
   const [selectedAnalysisOption, setSelectedAnalysisOption] = useState(filterStatus[0]?.value);
   const { data: roiChartData, isLoading: isLoadingGrowth } =
-    useGetTradingInvestmentDashboardRoiChart(selectedGrowthOption);
+    useGetOnlendingInvestmentDashboardRoiChart(selectedGrowthOption);
   const { data: portfolioChartData, isLoading: isloadingPortfolio } =
-    useGetInvestmentDashboardPortfolioChart(selectedOption);
+    useGetInvestmentOnlendingPortfolioChart(selectedOption);
   const { data: analyticsData, isLoading: isloadingTradingAnalysis } =
-    useTradingInvestmentDashboardAnalyticsChart(selectedAnalysisOption);
+    useOnlendingInvestmentDashboardAnalyticsChart(selectedAnalysisOption);
 
 
 
@@ -429,4 +430,5 @@ const InvestmentChart = () => {
   );
 };
 
-export default InvestmentChart;
+export default OnlendingInvestmentChart;
+

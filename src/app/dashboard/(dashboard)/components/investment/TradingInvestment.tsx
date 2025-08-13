@@ -23,7 +23,7 @@ import {
 import React, { useMemo, useState } from "react";
 import { SkeletonLoading } from "../referral/ReferalTable";
 import InvestmentChart from "./MetricsCard";
-import { useInvestmentDashboardtradingTable } from "@/app/dashboard/misc/api/investment/fetchInvestmentTradingtable";
+import { useInvestmentDashboardtradingTable } from "@/app/dashboard/misc/api/investment/trading/fetchInvestmentTradingtable";
 import { convertKebabAndSnakeToTitleCase } from "@/utils/strings";
 import { addCommasToNumber } from "@/utils";
 

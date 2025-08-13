@@ -11,9 +11,10 @@ import Select, { StylesConfig } from "react-select";
 import { cn } from "@/utils/classNames";
 import TradingInvestment from "../(dashboard)/components/investment/TradingInvestment";
 import OnleandingInvestment from "../(dashboard)/components/investment/OnleandingInvestment";
-import { useInvestmentDashboardOverview } from "../misc/api/investment/fetchInvestmentDashboardOverview";
+import { useInvestmentDashboardOverview } from "../misc/api/investment/trading/fetchInvestmentDashboardOverview";
 import { SmallSpinner } from "@/icons/core";
 import { selectStyle } from "@/utils/selectStyles";
+import AddInvestmentModal from "../(dashboard)/components/investment/AddInvestment";
 
 type OptionType = {
   label: string;
@@ -170,6 +171,13 @@ const InvestmentPage = () => {
 
       {activeTab === "Trading Investment" && <TradingInvestment />}
       {activeTab === "Onlending Investment" && <OnleandingInvestment />}
+      {withdrawalModalOpen && (
+        <AddInvestmentModal
+          isOpen={withdrawalModalOpen}
+          onClose={() => setWithdrawalModalOpen(false)}
+          walletBalance="24,041.08"
+        />
+      )}
     </div>
   );
 };
