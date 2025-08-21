@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useGetTransactionDetails } from '@/app/dashboard/misc/api/transactions/fetchTransactionDetails';
 import moment from "moment"
+import CloseIcon from '@/app/icons/CloseIcon';
 interface TransactionDetailsProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,8 +17,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
 }) => {
   if (!isOpen) return null;
   const {data}=useGetTransactionDetails(transId)
-  console.log(data);
-  
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-5 flex items-center justify-center z-50 p-4">
@@ -29,7 +29,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             onClick={onClose}
             className="text-white hover:text-gray-300 transition-colors p-1"
           >
-            <X size={24} />
+           <CloseIcon/>
           </button>
         </div>
 

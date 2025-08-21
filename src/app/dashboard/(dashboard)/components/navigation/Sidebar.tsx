@@ -4,6 +4,7 @@ import HomeIcon from '@/app/icons/(dashboard)/HomeIcon'
 import InvestmentIcon from '@/app/icons/(dashboard)/InvestmentIcon'
 import ProfileIcon from '@/app/icons/(dashboard)/ProfileIcon'
 import SettingsIcon from '@/app/icons/(dashboard)/SettingsIcon'
+import SubScriptionIcon from '@/app/icons/(dashboard)/SubscriptionIcon'
 import TradingIcon from '@/app/icons/(dashboard)/TrandingIcon'
 import TransactionIcon from '@/app/icons/(dashboard)/TransactionIcon'
 import OpticalLogo from '@/app/icons/Logo'
@@ -29,7 +30,12 @@ const Sidebar = () => {
         icon:<DashboardIcon/>
     },
     {
-        title:"Transaction",
+        title:"Subscription",
+        href:"/dashboard/subscription",
+        icon:<SubScriptionIcon/>
+    },
+    {
+      title:"Transaction",
         href:"/dashboard/transactions",
         icon:<TransactionIcon width={25} height={30}/>
     },

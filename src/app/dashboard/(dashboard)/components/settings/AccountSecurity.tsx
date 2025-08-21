@@ -24,6 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useUpdatePassword } from '@/app/dashboard/misc/api/settings/password/updatePassword'
 import { useQueryClient } from 'react-query'
 import { useUser } from '@/app/(auth)/(onboarding)/api/getUserDetails'
+import UserWidthdrawalOtpVerification from './withdraw/WithdrawalOtp'
 
 export type UserUpdatePasswordDetailsValue = z.infer<typeof UpdatePasswordSchema>;
 
@@ -39,6 +40,7 @@ const AccountSecurity = () => {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [dismisedBanner, setDismisedBanner] = useState(false)
+  const [showWidthrawalModal, setShowWidthrawalModal] = useState(false)
 const user = useUser()
 
 // password
@@ -210,7 +212,7 @@ const user = useUser()
             <h1 className="text-lg md:text-xl font-verdana font-medium text-white mb-1">Security</h1>
             <p className="text-sm text-white/70">Update your password for security reasons</p>
           </div>
-          <Button variant="outlined" className="text-white/70 border-white w-full md:w-auto">
+          <Button variant="outlined" className="text-white/70 border-white w-full md:w-auto" onClick={()=>setShowWidthrawalModal(true)}>
             Forgot Withdrawal Pin?
           </Button>
         </div>
@@ -437,6 +439,10 @@ const user = useUser()
                 errorModalMessage || "Please check your inputs and try again."
               }
             ></ErrorModal>
+
+            {
+              showWidthrawalModal && <UserWidthdrawalOtpVerification isOpen={showWidthrawalModal} onClose={()=>setShowWidthrawalModal(false)}/>
+            }
     </div>
   )
 }
