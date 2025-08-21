@@ -1,12 +1,14 @@
-import { createPasswordSchema, signUpUserBvnSchema } from "@/app/schema/SignupValidation";
+import {
+  createPasswordSchema,
+  signUpUserBvnSchema,
+} from "@/app/schema/SignupValidation";
 import React, { SetStateAction, useState } from "react";
 import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Button } from "@/components/core";
-import CopyIcon from "@/app/icons/CopyIcon";
-import { useClipboard, useErrorModalState } from "@/hooks";
+import { Button, ErrorModal } from "@/components/core";
+import { useErrorModalState } from "@/hooks";
 import EyeIcon from "@/app/icons/EyeIcon";
 import { useCreatePassword } from "../../api/sign-up/createPassword";
 import { formatAxiosErrorMessage } from "@/utils";
@@ -14,89 +16,86 @@ import { AxiosError } from "axios";
 import { SmallSpinner } from "@/icons/core";
 
 interface prop {
-  email: string
+  email: string;
   onNext: (value: SetStateAction<number>) => void;
   onPrev: (value: SetStateAction<number>) => void;
 }
 
 export type UserPasswordDetailsValue = z.infer<typeof createPasswordSchema>;
 
-const CreateNewPasswordDetails = ({onNext,onPrev,email}: prop) => {
-    const {mutate:handleCreatePassword, isLoading} = useCreatePassword()
-  
-   const {
-        isErrorModalOpen,
-        setErrorModalState,
-        openErrorModalWithMessage,
-        errorModalMessage,
-      } = useErrorModalState();
-    const [passwordShown, setPasswordShown] = useState(false);
-    const togglePassword = () => {
-        setPasswordShown(!passwordShown);
-      };
-    
+const CreateNewPasswordDetails = ({ onNext, onPrev, email }: prop) => {
+  const { mutate: handleCreatePassword, isLoading } = useCreatePassword();
+
+  const {
+    isErrorModalOpen,
+    setErrorModalState,
+    openErrorModalWithMessage,
+    errorModalMessage,
+  } = useErrorModalState();
+  const [passwordShown, setPasswordShown] = useState(false);
+  const togglePassword = () => {
+    setPasswordShown(!passwordShown);
+  };
+
   const {
     control,
     handleSubmit,
     register,
-    setValue,
+  
     formState: { errors, isValid },
   } = useForm<UserPasswordDetailsValue>({
     resolver: zodResolver(createPasswordSchema),
     defaultValues: {
       password: "",
-      password_2:""
-     
+      password_2: "",
     },
     mode: "onChange",
   });
 
-  const onSubmit =({password,password_2}:UserPasswordDetailsValue)=>{
-    if(isValid){
-        // onNext(3)
-        handleCreatePassword({
+  const onSubmit = ({ password, password_2 }: UserPasswordDetailsValue) => {
+    if (isValid) {
+      // onNext(3)
+      handleCreatePassword(
+        {
           email,
           password,
-          password_2
-        }, {
-                  onSuccess: () => {
-                    onNext(3);
-                  },
-                  onError: (error) => {
-                    const errorMessage = formatAxiosErrorMessage(error as AxiosError);
-                    openErrorModalWithMessage(String(errorMessage));
-                  },
-                })
+          password_2,
+        },
+        {
+          onSuccess: () => {
+            onNext(3);
+          },
+          onError: (error) => {
+            const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+            openErrorModalWithMessage(String(errorMessage));
+          },
+        }
+      );
     }
-  }
+  };
   return (
     <div className="text-white relative border-[.0187rem] py-6 xl:py-[4.5rem]  border-[#4649E5] px-6 md:px-[50px] 2xl:px-[6.1875rem] rounded-[1.25rem]">
-       <div className="">
+      <div className="">
         <h2 className="text-white font-verdana font-bold text-[1.25rem] xl:text-[1.75rem]">
-        Create New Password
+          Create New Password
         </h2>
         <p className="font-outfit text-sm xl:text-base text-white text-opacity-70 max-w-[27.75rem] font-light">
-        Your new password must be different 
-        from the one previously used.
+          Your new password must be different from the one previously used.
         </p>
-       
       </div>
 
-<form onSubmit={handleSubmit(onSubmit)} className="mt-8">
-
-  
-        
-      <div className="mt-4">
-           <Label
-                  className="mb-1 block text-sm font-outfit text-[#fff]"
-                  htmlFor={``}
-                >
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
+        <div className="mt-4">
+          <Label
+            className="mb-1 block text-sm font-outfit text-[#fff]"
+            htmlFor={``}
+          >
             Pasword*
           </Label>
 
-          <div className={` ${errors?.password ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}>
-        
-
+          <div
+            className={` ${errors?.password ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}
+          >
             <input
               className={`
                
@@ -118,27 +117,28 @@ const CreateNewPasswordDetails = ({onNext,onPrev,email}: prop) => {
             </button>
             {/* </div> */}
           </div>
- 
+
           {errors?.password && (
-              <p className="text-red-700 text-xs mt-1">
-                {errors?.password?.message}
-              </p>
-            )}
-          <p className="text-xs text-white max-w-[23.75rem] text-opacity-70 mt-2 font-outfit font-light">Must be at least 8 characters long - uppercase, lowercase, number,
-          special characters (@*-!_)</p>
-      </div>
-        
+            <p className="text-red-700 text-xs mt-1">
+              {errors?.password?.message}
+            </p>
+          )}
+          <p className="text-xs text-white max-w-[23.75rem] text-opacity-70 mt-2 font-outfit font-light">
+            Must be at least 8 characters long - uppercase, lowercase, number,
+            special characters (@*-!_)
+          </p>
+        </div>
 
         <div className="mt-4">
-            <Label
-                   className="mb-1 block text-sm font-outfit text-[#fff]"
-                   htmlFor={``}
-                 >
+          <Label
+            className="mb-1 block text-sm font-outfit text-[#fff]"
+            htmlFor={``}
+          >
             Confirm Pasword*
-          </Label> <div className={` ${errors?.password_2 ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}>
-        
-
-
+          </Label>{" "}
+          <div
+            className={` ${errors?.password_2 ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}
+          >
             <input
               className="login-autofill-text login-no-chrome-autofill-bg h-auto min-w-0 grow !bg-transparent py-3.5 pl-6 text-base font-medium text-white placeholder:text-white focus-visible:outline-none"
               id="password"
@@ -159,16 +159,29 @@ const CreateNewPasswordDetails = ({onNext,onPrev,email}: prop) => {
             {/* </div> */}
           </div>
           {errors?.password_2 && (
-              <p className="text-red-700 text-xs mt-1">
-                {errors?.password_2?.message}
-              </p>
-            )}
-      </div>
-<div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
-    <Button className="w-full bg-white text-[#2B3AA6] h-11 flex justify-center items-center gap-x-3 rounded-10 font-outfit text-sm " type="submit">Verify  {isLoading && <SmallSpinner color="blue" />}</Button>
-</div>
-
-</form>
+            <p className="text-red-700 text-xs mt-1">
+              {errors?.password_2?.message}
+            </p>
+          )}
+        </div>
+        <div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
+          <Button
+            className="w-full bg-white text-[#2B3AA6] h-11 flex justify-center items-center gap-x-3 rounded-10 font-outfit text-sm "
+            type="submit"
+          >
+            Verify {isLoading && <SmallSpinner color="blue" />}
+          </Button>
+        </div>
+      </form>
+      <ErrorModal
+        isErrorModalOpen={isErrorModalOpen}
+        setErrorModalState={() => {
+          setErrorModalState(false);
+        }}
+        subheading={
+          errorModalMessage || "Please check your inputs and try again."
+        }
+      ></ErrorModal>
     </div>
   );
 };

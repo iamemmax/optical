@@ -17,13 +17,12 @@ export default function ProtectedRouteGuard({ children }: ProtectedRouteProps) {
   const pathname = usePathname();
   const { authState } = useAuth();
 
-  const protectedRoutes = ["/dashboard","/dashboard/investment"]; // Define your protected routes here
+  const protectedRoutes = ["/dashboard","/dashboard/investment","/dashboard/transactions","/dashboard/settings"]; // Define your protected routes here
 
   const { isAuthenticated, isLoading } = authState;
 
   const path = pathname; // Access pathname using useRouter
 
-  const { data, isError, error } = useUser();
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated && protectedRoutes.includes(path)) {

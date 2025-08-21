@@ -43,33 +43,31 @@ export interface LoginResponse {
     contestant_id: number;
     contestant_attr: string;
   };
-}
 
+}
 export interface UserDataTypes {
-    id: number;
+  id: number;
   full_name: string;
   email: string;
   phone_number: string;
   is_active: boolean;
   is_staff: boolean;
   bvn_verified: boolean;
-  referral_link: string;
-  referral_code: string;
+  referral_link: null;
+  referral_code: null;
   bvn_number: null;
+  wallet_details: Walletdetails;
+  onboarding_stage: string;
+  profile_image: null;
+  account_security_perc: number;
 }
 
-
-
-  interface Profileimageobject {
-    img_id: string;
-    img_url: string;
+interface Walletdetails {
+  main_balance: number;
+  naira_wallet_balance_balance: number;
+  dollar_wallet_balance_balance: number;
+  earnings_wallet_balance_balance: number;
+  account_number: string;
+  account_name: string;
+  bank_name: string;
 }
-
-interface Hospitals {
-  lga: string;
-  state: string;
-  hospital: string;
-  provider_id: string;
-}
-
-
