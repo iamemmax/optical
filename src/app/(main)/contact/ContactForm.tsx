@@ -82,7 +82,7 @@ const {mutate:handleContact,isLoading}=useContactUs()
        },{
          onSuccess:(data)=>{
            if(data){
-           toast.success("Message sect successfully")
+           toast.success("Message sent successfully")
            reset()
            }
          },
