@@ -19,9 +19,9 @@ export interface resetprop {
 
 }
 
-const SignUpScreen = () => {
+const SignUpScreen = ({}) => {
   const [step, setStep] = useState(1);
-  const [CC, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [bvn, setBvn] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("")
  

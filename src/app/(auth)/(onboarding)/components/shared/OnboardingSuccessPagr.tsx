@@ -34,7 +34,7 @@ const OnboardingSuccessPage = ({subTitle,title,href="/login",openFrom="onboardin
 
 </div>}
 {openFrom==="dashboard"&&<div className="w-full z-50">
-<Button className="w-full bg-white font-bold mt-6  h-12 rounded-10 font-outfit text-[#2B3AA6] text-sm  max-w-[25.75rem] "  onClick={()=>onClose()}>Done</Button>
+<Button className="w-full bg-white font-bold mt-6  h-12 rounded-10 font-outfit text-[#2B3AA6] text-sm  max-w-[25.75rem] "  onClick={onClose}>Done</Button>
 
 </div>}
 
