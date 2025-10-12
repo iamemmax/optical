@@ -23,19 +23,36 @@ const nextConfig = {
         pathname: '/**',
       },
       {
+        protocol: 'https',
+        hostname: '167.99.47.158:8000/',
+        pathname: '/**',
+      },
+      {
         protocol: 'http',
-        hostname: 'localhost',
+        hostname: '167.99.47.158:8000/',
         pathname: '/**',
       },
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '8090',
+        pathname: '/**',
+      },
+      {
+
+      
+        protocol: 'http',
+        hostname: '167.99.47.158',
+        port: '8000',
         pathname: '/media/images/**',
       },
       // ✅ Use a fallback hostname instead of env var (Next.js limitation)
       ...(process.env.NEXT_PUBLIC_LIFE_SAVINGS_API_BASE_URL
         ? [
+            {
+              protocol: 'http',
+              hostname: new URL(process.env.NEXT_PUBLIC_LIFE_SAVINGS_API_BASE_URL).hostname,
+              pathname: '/media/images/**',
+            },
             {
               protocol: 'https',
               hostname: new URL(process.env.NEXT_PUBLIC_LIFE_SAVINGS_API_BASE_URL).hostname,
