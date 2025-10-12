@@ -3,15 +3,9 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import OpticalLogo from '@/app/icons/Logo';
-import DashboardIcon from '@/app/icons/(dashboard)/DashboardIcon';
-import HistoryIcon from '@/app/icons/(dashboard)/HistoryIcon';
-import HomeIcon from '@/app/icons/(dashboard)/HomeIcon';
-import ProfileIcon from '@/app/icons/(dashboard)/ProfileIcon';
-import SettingsIcon from '@/app/icons/(dashboard)/SettingsIcon';
-import TradingIcon from '@/app/icons/(dashboard)/TrandingIcon';
-import TransactionIcon from '@/app/icons/(dashboard)/TransactionIcon';
+;
 import { useActivePath } from '@/utils/navigation';
-import InvestmentIcon from '@/app/icons/(dashboard)/InvestmentIcon';
+import { navLinks } from './Sidebar';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -21,53 +15,7 @@ interface MobileNavProps {
 const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
   const isActive = useActivePath();
   
-  const navLinks = [
-    {
-        title:"Home",
-        href:"/",
-        icon:<HomeIcon/>
-    },
-    {
-        title:"Dashboard",
-        href:"/dashboard",
-        icon:<DashboardIcon/>
-    },
-    {
-        title:"Transaction",
-        href:"/dashboard/transactions",
-        icon:<TransactionIcon width={25} height={30}/>
-    },
-    {
-        title:"Trading Signal",
-        href:"/dashboard/trading-signal",
-        icon:<TradingIcon/>
-    },
-    {
-        title:"Investment",
-        href:"/dashboard/investment",
-        icon:<InvestmentIcon/>
-    },
-    // {
-    //     title:"History (Graph)",
-    //     href:"/",
-    //     icon:<HistoryIcon/>
-    // },
-    {
-        title:"Referral",
-        href:"/dashboard/referral",
-        icon:<HistoryIcon/>
-    },
-    {
-        title:"Profile",
-        href:"/dashboard/profile",
-        icon:<ProfileIcon/>
-    },
-    {
-        title:"Settings",
-        href:"/dashboard/settings",
-        icon:<SettingsIcon/>
-    },
-  ]
+  
 
   return (
     <AnimatePresence>

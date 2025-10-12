@@ -22,6 +22,17 @@ const nextConfig = {
           hostname: 'cdn.brandfetch.io',
           pathname: '/**',
         },
+        {
+          protocol: 'http',
+          hostname: 'localhost',
+          pathname: '/**',
+        },
+        {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8090",
+        pathname: "/media/images/**",
+      },
       ],
     },
   };

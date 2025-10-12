@@ -14,62 +14,62 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import React, { useState } from 'react'
 
+export const navLinks = [
+  {
+      title:"Home",
+      href:"/",
+      icon:<HomeIcon/>
+  },
+  {
+      title:"Dashboard",
+      href:"/dashboard",
+      icon:<DashboardIcon/>
+  },
+  {
+      title:"Subscription",
+      href:"/dashboard/subscription",
+      icon:<SubScriptionIcon/>
+  },
+  {
+    title:"Transaction",
+      href:"/dashboard/transactions",
+      icon:<TransactionIcon width={25} height={30}/>
+  },
+  {
+      title:"Trading Signal",
+      href:"/dashboard/trading-signal",
+      icon:<TradingIcon/>
+  },
+  {
+      title:"Investment",
+      href:"/dashboard/investment",
+      icon:<InvestmentIcon/>
+  },
+  // {
+  //     title:"History (Graph)",
+  //     href:"/",
+  //     icon:<HistoryIcon/>
+  // },
+  {
+      title:"Referral",
+      href:"/dashboard/referral",
+      icon:<HistoryIcon/>
+  },
+  {
+      title:"Profile",
+      href:"/dashboard/profile",
+      icon:<ProfileIcon/>
+  },
+  {
+      title:"Settings",
+      href:"/dashboard/settings",
+      icon:<SettingsIcon/>
+  },
+]
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isActive = useActivePath();
   
-  const navLinks = [
-    {
-        title:"Home",
-        href:"/",
-        icon:<HomeIcon/>
-    },
-    {
-        title:"Dashboard",
-        href:"/dashboard",
-        icon:<DashboardIcon/>
-    },
-    {
-        title:"Subscription",
-        href:"/dashboard/subscription",
-        icon:<SubScriptionIcon/>
-    },
-    {
-      title:"Transaction",
-        href:"/dashboard/transactions",
-        icon:<TransactionIcon width={25} height={30}/>
-    },
-    {
-        title:"Trading Signal",
-        href:"/dashboard/trading-signal",
-        icon:<TradingIcon/>
-    },
-    {
-        title:"Investment",
-        href:"/dashboard/investment",
-        icon:<InvestmentIcon/>
-    },
-    // {
-    //     title:"History (Graph)",
-    //     href:"/",
-    //     icon:<HistoryIcon/>
-    // },
-    {
-        title:"Referral",
-        href:"/dashboard/referral",
-        icon:<HistoryIcon/>
-    },
-    {
-        title:"Profile",
-        href:"/dashboard/profile",
-        icon:<ProfileIcon/>
-    },
-    {
-        title:"Settings",
-        href:"/dashboard/settings",
-        icon:<SettingsIcon/>
-    },
-  ]
 
   return (
     <motion.div 

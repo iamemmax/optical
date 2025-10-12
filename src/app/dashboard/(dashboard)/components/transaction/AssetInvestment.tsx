@@ -66,7 +66,7 @@ const AssetInvestment = () => {
     () => [
       columnHelper.accessor("date_time", {
         header: () => "Date & Time",
-        cell: (info) => moment(info.getValue())?.format("lll"),
+        cell: (info) =><div className="min-w-[150px]">{ moment(info.getValue())?.format("lll")}</div>,
       }),
       columnHelper.accessor("type", {
         header: () => "type",
@@ -87,17 +87,17 @@ const AssetInvestment = () => {
       columnHelper.accessor("status", {
         header: () => "Status",
         cell: (info) => (
-          <div
-            className={` max-w-[100px] flex justify-center capitalize border-opacity-40 items-center py-[.5625rem] text-sm font-medium bg-transparent rounded-lg border-[0.3px] ${getStatusColor(convertKebabAndSnakeToTitleCase(info.getValue()))}`}
+          <Button
+            className={` max-w-[100px] flex justify-center capitalize border-opacity-40 items-center py-2 text-sm font-medium bg-transparent rounded-lg border-[0.3px] ${getStatusColor(convertKebabAndSnakeToTitleCase(info.getValue()))}`}
           >
             {convertKebabAndSnakeToTitleCase(info.getValue())}
-          </div>
+          </Button>
         ),
       }),
        columnHelper.accessor("action", {
                       header: () => "Action",
                       cell: (info) => (
-                          <Button onClick={()=>handleShowDetailsModal(info?.row?.original?.id)} variant={"outlined"} className='text-white border-white border-opacity-55'>View Details</Button>
+                          <Button onClick={()=>handleShowDetailsModal(info?.row?.original?.id)} variant={"outlined"} className='text-white border-white p-2 w-[100px] border-opacity-55'>View Details</Button>
                       )
                   })
     ],
@@ -125,9 +125,9 @@ const AssetInvestment = () => {
   });
 
   return (
-    <div className="px-8 py-6 bg-[#090E29] h-full">
+    <div className="md:px-8 px-4 py-6 bg-[#090E29] h-full">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <h2 className="text-white font-bold font-verdana text-base">
             Recent Transactions
           </h2>
@@ -136,7 +136,7 @@ const AssetInvestment = () => {
               {data?.data?.length ?? 0}
             </p>
           </div>
-          <div className="relative">
+          <div className="relative max-md:w-full">
             <DebounceInput
               onChange={(e) => setSearchTerm(e)}
               value={searchTerm}
@@ -146,13 +146,13 @@ const AssetInvestment = () => {
             />
           </div>
         </div>
-        <Button
+        {/* <Button
           variant="outlined"
           className="bg-slate-700/50 border-slate-600  text-white hover:bg-slate-700"
         >
           <FIlterIcon className="w-4 h-4 mr-2" />
           Filter
-        </Button>
+        </Button> */}
       </div>
 
       <div className="block overflow-x-auto mt-6">

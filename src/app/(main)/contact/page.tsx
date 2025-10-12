@@ -33,46 +33,7 @@ const ContactPage = () => {
     },
   ];
 
-  const aboutMissiondata = [
-    {
-      title: "Mission",
-      decription:
-        "To unlock access to smart financial opportunities through transparent, intuitive, and high-yield investment and lending solutions.",
-      img: "/images/about/aboutImage1.png",
-    },
-    {
-      title: "Vision",
-      decription:
-        "A world where capital flows easily and opportunities are open to everyone—investors, SMEs, and the everyday trader.",
-      img: "/images/about/aboutImage2.png",
-    },
-  ];
-
-  const whatWeGoArray = [
-    {
-      title: "Trading Signal & Investment Insight",
-      description:
-        "We provide intelligent signals and tools that help users make data-driven trading decisions.",
-      icon: <NetworkIcon />,
-    },
-    {
-      title: "Invoice Discounting",
-      description:
-        "Helping businesses access funds faster by trading unpaid invoices.",
-      icon: <NetworkIcon />,
-    },
-    {
-      title: "Asset Finance & Payroll Lending",
-      description:
-        "Supporting business growth with tailored financing for assets or employee salaries.",
-      icon: <NetworkIcon />,
-    },
-    {
-      title: "High Approval Rate For Loans",
-      description: "24/7 Platform Access",
-      icon: <NetworkIcon />,
-    },
-  ];
+  
 
   return (
     <div className="overflow-y-auto  ">
@@ -118,7 +79,7 @@ bg-no-repeat bg-cover"
                     <div className="max-w-[150px]">
                       <LinkButton
                         href={"/login"}
-                        className="bg-white max-xxscren:text-xs text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center  2xl:px-6 py-[0.625rem] px-3 md:px-4 font-outfit"
+                        className="bg-white max-xxscren:text-xs text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center  2xl:px-1 py-[0.625rem] px-3 md:px-4 font-outfit"
                       >
                         Get Started{" "}
                         <svg

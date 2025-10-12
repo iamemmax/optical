@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/core';
+import { Button, ErrorModal } from '@/components/core';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import FacebookIcon from '@/app/icons/social-media/Facebook';
@@ -11,12 +11,18 @@ import InstagramIcon from '@/app/icons/social-media/InstagramIcon';
 import Linkdin from '@/app/icons/social-media/Linkdin';
 import XIcon from '@/app/icons/social-media/XIcon';
 import YoutubeIcon from '@/app/icons/social-media/YoutubeIcon';
+import { useContactUs } from '@/app/(auth)/(onboarding)/api/contact/contactUs';
+import { useErrorModalState } from '@/hooks';
+import { formatAxiosErrorMessage } from '@/utils';
+import { AxiosError } from 'axios';
+import { useAuth } from '@/contexts/authentication';
 
 // Define validation schema
 const contactFormSchema = z.object({
-  fullName: z.string().min(3, { message: "Full name is required" }),
+  first_name: z.string().min(3, { message: "first name is required" }),
+  last_name: z.string().min(3, { message: "last name is required" }),
   email: z.string().email({ message: "Please enter a valid email" }),
-  phoneNo: z.string().min(10, { message: "Please enter a valid phone number" }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number" }),
   subject: z.string().min(3, { message: "Subject is required" }),
   message: z.string().min(10, { message: "Message must be at least 10 characters" }),
 });
@@ -24,7 +30,14 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 const ContactForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {authState}=useAuth()
+  const {user}=authState
+  const {
+      isErrorModalOpen,
+      setErrorModalState,
+      openErrorModalWithMessage,
+      errorModalMessage,
+    } = useErrorModalState();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   // Background images that will rotate
@@ -54,28 +67,30 @@ const ContactForm = () => {
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
-      fullName: '',
-      email: '',
-      phoneNo: '',
-      subject: '',
+      first_name: user?.full_name?.split(" ")[0]||'',
+      last_name:user?.full_name?.split(" ")[1]||'',
+      email:user?.email|| '',
+      phone:user?.phone_number|| '',
+      subject:'',
       message: ''
     }
   });
-
-  const onSubmit = async (data: ContactFormValues) => {
-    setIsSubmitting(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Form submitted:', data);
-      toast.success('Message sent successfully!');
-      reset();
-    } catch (error) {
-      toast.error('Failed to send message. Please try again.');
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+const {mutate:handleContact,isLoading}=useContactUs()
+  const onSubmit =  ({email,first_name,last_name,message,phone,subject}: ContactFormValues) => {
+   handleContact({
+       email,first_name,last_name,message,phone,subject
+       },{
+         onSuccess:(data)=>{
+           if(data){
+           toast.success("Message sect successfully")
+           reset()
+           }
+         },
+         onError: (error) => {
+           const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+           openErrorModalWithMessage(String(errorMessage));
+         },
+       })
   };
   
   const socialMedia = [
@@ -112,14 +127,26 @@ const ContactForm = () => {
       <div className="bg-[#0A0E1F] rounded-lg p-6 lg:p-8 shadow-lg border border-blue-900/30">
         <h2 className="text-white text-xl font-semibold mb-6">Contact Form</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <input
               type="text"
-              placeholder="Full name"
-              className={`w-full bg-[#131B31] text-white rounded-md p-4 outline-none border ${errors.fullName ? 'border-red-500' : 'border-transparent'}`}
-              {...register('fullName')}
+              placeholder="first name"
+              className={`w-full bg-[#131B31] text-white rounded-md p-4 outline-none border ${errors.first_name ? 'border-red-500' : 'border-transparent'}`}
+              {...register('first_name')}
             />
-            {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>}
+            {errors.first_name && <p className="text-red-500 text-xs mt-1">{errors.first_name.message}</p>}
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Last name"
+              className={`w-full bg-[#131B31] text-white rounded-md p-4 outline-none border ${errors.last_name ? 'border-red-500' : 'border-transparent'}`}
+              {...register('last_name')}
+            />
+            {errors.last_name && <p className="text-red-500 text-xs mt-1">{errors.last_name.message}</p>}
+          </div>
+
           </div>
           
           <div>
@@ -136,10 +163,10 @@ const ContactForm = () => {
             <input
               type="tel"
               placeholder="Phone no"
-              className={`w-full bg-[#131B31] text-white rounded-md p-4 outline-none border ${errors.phoneNo ? 'border-red-500' : 'border-transparent'}`}
-              {...register('phoneNo')}
+              className={`w-full bg-[#131B31] text-white rounded-md p-4 outline-none border ${errors.phone ? 'border-red-500' : 'border-transparent'}`}
+              {...register('phone')}
             />
-            {errors.phoneNo && <p className="text-red-500 text-xs mt-1">{errors.phoneNo.message}</p>}
+            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
           </div>
           
           <div>
@@ -165,10 +192,10 @@ const ContactForm = () => {
           <div>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isLoading}
               className="bg-white text-blue-900 hover:bg-blue-100 transition-colors w-full md:w-auto px-8 py-3 rounded-md font-medium"
             >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
+              {isLoading ? 'Sending...' : 'Send Message'}
             </Button>
           </div>
         </form>
@@ -229,6 +256,16 @@ const ContactForm = () => {
           </div>
         </div>
       </div>
+       <ErrorModal
+              isErrorModalOpen={isErrorModalOpen}
+              setErrorModalState={() => {
+                setErrorModalState(false);
+              }}
+              subheading={
+                errorModalMessage ||
+                "Please check your inputs and try again."
+              }
+            ></ErrorModal>
     </div>
   );
 };

@@ -7,10 +7,14 @@ import WalletIcon from '@/app/icons/(dashboard)/WalletIcon';
 import { Button } from '@/components/core';
 import useClipboard from '@/hooks/useClipboard copy';
 import React, { useState } from 'react'
-import Select, { StylesConfig } from "react-select";
+import Select from "react-select";
 import ReferalTable from '../(dashboard)/components/referral/ReferalTable';
 import WithdrawalModal from '../(dashboard)/components/referral/WithdrawalModal';
-import { UserDataTypes } from '@/app/(auth)/(onboarding)/misc/types';
+import { useFetchReferralOverview } from '../misc/api/referral/fetchReferralOverview';
+import { selectStyle } from '@/utils/selectStyles';
+import { addCommasToNumber } from '@/utils';
+import { useUser } from '@/app/(auth)/(onboarding)/api/getUserDetails';
+import { SmallSpinner } from '@/icons/core';
 
 type OptionType = {
   label: string;
@@ -18,90 +22,49 @@ type OptionType = {
 }
 
 const Page = () => {
-    const [userData, setUserData] = useState<UserDataTypes | null>(null);
     const [selectedReferralOption, setSelectedReferralOption] = useState<OptionType | null>(null);
     const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
-    
+      const [selectedOption, setSelectedOption] = useState<OptionType | null>(null);
+
+    const {data:userData}= useUser()
     const filterStatus: OptionType[] = [
         { label: "today", value: "today" },
         { label: "this Week", value: "this_week" },
         { label: "this month", value: "this_month" },
         { label: "this year", value: "this_year" },
     ];
+    const {data, isLoading}=useFetchReferralOverview(String(selectedOption?.value))
     const cardsArray = [
         {
-            icon:<WalletIcon height={15} width={15}/>,
-            title:"Referral Wallet",
-            count:"₦300,000,000",
-            rate:"Increase from Last Month",
-            percentage:"+10%"
-        },
-        {
-            icon:<ReferralIcon1 height={20} width={20}/>,
-            title:"Total Referrals",
-            count:"22",
-            rate:"Increase from Last Month",
-            percentage:"+10%"
-        },
-        {
-            icon:<ReferralIcon2 height={20} width={20}/>,
-            title:"Verified Signups",
-            count:"18",
-            rate:"Increase from Last Month",
-            percentage:"+10%"
-        },
-        {
-            icon:<ReferralIcon2 height={20} width={20}/>,
-            title:"First-time Deposit",
-            count:"12",
-            rate:"Increase from Last Month",
-            percentage:"+10%"
-        },
-    ]
+            icon: <WalletIcon height={15} width={15}/>,
+        title: "Referral Wallet",
+        count: `₦${addCommasToNumber(Number(data?.referral_wallet?.amount ?? 0))}`,
+        rate: `Increase from Last ${data?.referral_wallet?.period ?? ""}`,
+        percentage: `${data?.referral_wallet?.change === "up" ? "+" : "-"}${data?.referral_wallet?.percent_change ?? "0"}%`
+    },
+    {
+        icon: <ReferralIcon1 height={20} width={20}/>,
+        title: "Total Referrals",
+        count: data?.total_referrals?.count ?? 0,
+        rate: `Increase from Last ${data?.total_referrals?.period ?? ""}`,
+        percentage: `${data?.total_referrals?.change === "up" ? "+" : "-"}${data?.total_referrals?.percent_change ?? "0"}%`
+    },
+    {
+        icon: <ReferralIcon2 height={20} width={20}/>,
+        title: "Verified Signups",
+        count: data?.verified_signups?.count ?? 0,
+        rate: `Increase from Last ${data?.verified_signups?.period ?? ""}`,
+        percentage: `${data?.verified_signups?.change === "up" ? "+" : "-"}${data?.verified_signups?.percent_change ?? "0"}%`
+    },
+    {
+        icon: <ReferralIcon2 height={20} width={20}/>,
+        title: "First-time Deposit",
+        count: data?.first_time_deeposits?.count ?? 0, // Fixed typo: "deeposits" → "deposits"
+        rate: `Increase from Last ${data?.first_time_deeposits?.period ?? ""}`, // Fixed typo here too
+        percentage: `${data?.first_time_deeposits?.change === "up" ? "+" : "-"}${data?.first_time_deeposits?.percent_change ?? "0"}%` // And here
+    },
+]
     
-    const [selectedOption, setSelectedOption] = useState<OptionType | null>(null);
-
-    const style: StylesConfig<OptionType, false> = {
-        control: (base) => ({
-            ...base,
-            borderColor: " #eee",
-            background: "#090E29",
-            height: "2.875rem",
-            boxShadow: "none",
-            paddingInline: "10px",
-            color: "#fff",
-            fontSize: "14px",
-            borderRadius: "10px",
-            borderWidth: "0.3px",
-          }),
-          option: (provided) => ({
-            ...provided,
-            color: "#333",
-            background: "#fff",
-            fontSize: "12px",
-            zIndex: "9999999",
-            "&:hover": {
-              background: "#fff",
-            },
-          }),
-          input: (provided) => ({
-            ...provided,
-            color: "#fff",
-            fontSize: "12px",
-            textTransform: "capitalize",
-            borderRadius: "8px",
-          }),
-          singleValue: (provided) => ({
-            ...provided,
-            color: "#fff",
-            fontSize: "12px",
-            textTransform: "capitalize",
-            borderRadius: "8px",
-          }),
-    };
-
-
-    // WalletIcon
 
   const { copy } = useClipboard();
     
@@ -119,12 +82,12 @@ const Page = () => {
     const referralOption = [
         {
           label: "Referral code",
-          value: userData?.referral_code || "2436473",
+          value: data?.referral_code|| "",
           type: "copy",
         },
         {
           label: "Referral Links",
-          value: `https://www.libertylifeplus.com/plan?referral_code=${userData?.referral_code || "2436473"}`,
+          value: data?.referral_link ??"",
           type: "copy",
         },
     ];
@@ -144,21 +107,21 @@ const Page = () => {
                             }}
                             defaultValue={filterStatus.find(option => option.value === selectedOption?.value)}
                             options={filterStatus}
-                            styles={style}
+                            styles={selectStyle}
                             isSearchable={false}
                             onChange={handleOption}
                         />
                         </div>
                     </div>
                     <div className="flex  gap-4 justify-between items-center max-sm:mt-3 lg:mt-0">
-                        <div className="flex items-center  gap-4">
+                       {!isLoading&& <div className="flex items-center  gap-4">
                             <div className="hidden lg:flex items-start justify-center flex-col gap-x-2 border-[0.3px] border-white bg-[#090E29] px-4 rounded-lg cursor-pointer border-opacity-30 py-[.5625rem]"
-                                onClick={() => copy(`https://opticraft/?referral_code=${userData?.referral_code || "2436473"}`)}
+                                onClick={() => copy(`${data?.referral_link ??""}`)}
                             >
                                 <p className="text-white text-[.5rem]">Your unique referral link</p>
                                 <div className="flex gap-2">
                                     <p className="text-white max-w-[7rem] text-xxs truncate">
-                                        {`https://opticraft/?referral_code=${userData?.referral_code || "2436473"}`}
+                                        {`${data?.referral_link??""}`}
                                     </p>
                                     <Button className="text-white px-0 py-[.0625rem] flex items-start bg-[#090E29] text-xs font-medium">
                                         <CopyIcon height={15} width={15} fillColor="#fff" />
@@ -166,12 +129,12 @@ const Page = () => {
                                 </div>
                             </div>
                             <div className="hidden lg:flex items-start justify-center flex-col gap-x-2 bg-[#090E29] border-[0.3px] border-white px-6 rounded-lg cursor-pointer border-opacity-30 py-[.5625rem]"
-                                onClick={() => copy(userData?.referral_code || "2436473")}
+                                onClick={() => copy(data?.referral_code || "")}
                             >
                                 <p className="text-white text-[.5rem]">Referral Code</p>
                                 <div className="flex gap-3">
                                     <p className="text-white max-w-[4rem] text-xxs truncate">
-                                        {userData?.referral_code || "2436473"}
+                                        {data?.referral_code || ""}
                                     </p>
                                     <Button className="text-white px-0 py-[.0625rem] flex items-start bg-transparent text-xs font-medium">
                                         <CopyIcon height={15} width={15} fillColor="#fff" />
@@ -186,7 +149,7 @@ const Page = () => {
                                     placeholder="Select Referral"
                                     className="react-select-container"
                                     classNamePrefix="react-select"
-                                    styles={style}
+                                    styles={selectStyle}
                                     isSearchable={false}
                                     components={{
                                         IndicatorSeparator: () => null,
@@ -201,10 +164,13 @@ const Page = () => {
                                     Withdrawal
                                 </Button>
                             </div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
 
+                {
+                    isLoading ? <div className='flex justify-center items-center py-6'><SmallSpinner color='#fff'/></div>
+                    :
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center gap-4">
 {
     cardsArray?.map((card,idx:number)=>(
@@ -221,6 +187,8 @@ const Page = () => {
     ))
 }
                 </div>
+                }
+
 
             </div>
                 <ReferalTable/>
@@ -228,7 +196,7 @@ const Page = () => {
                {withdrawalModalOpen&& <WithdrawalModal 
     isOpen={withdrawalModalOpen}
     onClose={() => setWithdrawalModalOpen(false)}
-    walletBalance="24,041.08"
+    walletBalance={String(userData?.wallet_details?.main_balance)}
 />}
         </div>
     )

@@ -13,6 +13,10 @@ import { useDashboardOverview } from "./misc/api/dashboard/fetchDashboardOvervie
 import { SmallSpinner } from "@/icons/core";
 import DashboardInvestmentChart from "./(dashboard)/components/dashboard/DashboardInvestmentChart";
 import ReturnOnInvestment from "./(dashboard)/components/dashboard/ReturnOnInvestment";
+import WithdrawalModal from "./(dashboard)/components/referral/WithdrawalModal";
+import { useUser } from "../(auth)/(onboarding)/api/getUserDetails";
+import { selectStyle } from "@/utils/selectStyles";
+import DepositFundsModal from "./(dashboard)/components/dashboard/DepositModal";
 
 type OptionType = {
   label: string;
@@ -20,16 +24,16 @@ type OptionType = {
 };
 
 const Page = () => {
-  const [userData, setUserData] = useState<UserDataTypes | null>(null);
+  // const [userData, setUserData] = useState<UserDataTypes | null>(null);
+  const userData = useUser()
   const [selectedReferralOption, setSelectedReferralOption] =
     useState<OptionType | null>(null);
   const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<OptionType | null>(null);
-
+const [showDepositModal, setShowDepositModal] = useState(false)
   const { data: dashOverviewData, isLoading } = useDashboardOverview(
     selectedOption?.value || "today"
   );
-  console.log(dashOverviewData);
 
   const filterStatus: OptionType[] = [
     { label: "today", value: "today" },
@@ -72,55 +76,6 @@ const Page = () => {
     },
   ];
 
-  const style: StylesConfig<OptionType, false> = {
-    control: (base) => ({
-      ...base,
-      borderColor: " #eee",
-      background: "#090E29",
-      height: "2.875rem",
-      boxShadow: "none",
-      paddingInline: "10px",
-      color: "#fff",
-      fontSize: "14px",
-      borderRadius: "10px",
-
-      borderWidth: "0.3px",
-      paddingLeft: "3px",
-      paddingRight: "3px",
-      // backgroundColor:"red"
-    }),
-    option: (provided) => ({
-      ...provided,
-      color: "#333",
-      background: "#fff",
-      fontSize: "12px",
-      zIndex: "9999999",
-      "&:hover": {
-        background: "#fff",
-      },
-    }),
-    input: (provided) => ({
-      ...provided,
-      color: "#fff",
-      fontSize: "12px",
-      textTransform: "capitalize",
-      borderRadius: "8px",
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: "#fff",
-      fontSize: "12px",
-      textTransform: "capitalize",
-      borderRadius: "8px",
-    }),
-    placeholder(base) {
-      return {
-        ...base,
-        color: "#fff",
-        fontSize: "12px",
-      };
-    },
-  };
 
   // WalletIcon
 
@@ -140,12 +95,12 @@ const Page = () => {
   const referralOption = [
     {
       label: "Referral code",
-      value: userData?.referral_code || "",
-      type: "copy",
+      value: userData?.data?.referral_code || "",
+      type: "copy"
     },
     {
       label: "Referral Links",
-      value: `https://www.libertylifeplus.com/plan?referral_code=${userData?.referral_code || ""}`,
+      value: `https://www.libertylifeplus.com/plan?referral_code=${userData?.data?.referral_code || ""}`,
       type: "copy",
     },
   ];
@@ -154,7 +109,8 @@ const Page = () => {
     <div className=" ">
       <div className="bg-[#090E29] w-full border-[0.3px] border-[#4453DD] rounded-10 p-6">
         <div className="flex justify-between w-full flex-wrap items-center">
-          <div className="flex items-center gap-3">
+          {/* Overview and Filter - Full width on mobile */}
+          <div className="flex items-center gap-3 w-full lg:w-auto">
             <h2 className="text-white font-verdana font-bold text-2xl">
               Overview
             </h2>
@@ -168,19 +124,42 @@ const Page = () => {
                   (option) => option.value === selectedOption?.value
                 )}
                 options={filterStatus}
-                styles={style}
+                styles={selectStyle}
                 isSearchable={false}
                 onChange={handleOption}
               />
             </div>
           </div>
-          <div className="flex  gap-4 justify-between items-center max-sm:mt-3 lg:mt-0">
-            <div className="flex items-center flex-wrap  gap-4">
+
+          {/* Referral and Buttons Section */}
+          <div className="flex flex-col gap-3 w-full lg:w-auto mt-4 lg:mt-0">
+            {/* Row 1: Referral Options (Mobile) */}
+            <div className="flex gap-4 w-full lg:hidden">
+              <div className="flex-1">
+                <Select
+                  options={referralOption}
+                  value={selectedReferralOption}
+                  onChange={handleSelectChange}
+                  placeholder="Select Referral"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  styles={selectStyle}
+                  isSearchable={false}
+                  components={{
+                    IndicatorSeparator: () => null,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Buttons (Mobile) / All items (Desktop) */}
+            <div className="flex gap-4 items-center flex-wrap lg:flex-nowrap">
+              {/* Desktop Referral Links */}
               <div
                 className="hidden lg:flex items-start justify-center flex-col gap-x-2 border-[0.3px] border-white bg-[#090E29] px-4 rounded-lg cursor-pointer border-opacity-30 py-[.5625rem]"
                 onClick={() =>
                   copy(
-                    `https://opticraft/?referral_code=${userData?.referral_code || "2436473"}`
+                    `https://opticraft/?referral_code=${userData?.data?.referral_code || "2436473"}`
                   )
                 }
               >
@@ -189,7 +168,7 @@ const Page = () => {
                 </p>
                 <div className="flex gap-2">
                   <p className="text-white max-w-[7rem] text-xxs truncate">
-                    {`https://opticraft/?referral_code=${userData?.referral_code || "2436473"}`}
+                    {`https://opticraft/?referral_code=${userData?.data?.referral_code || "2436473"}`}
                   </p>
                   <Button className="text-white px-0 py-[.0625rem] flex items-start bg-[#090E29] text-xs font-medium">
                     <CopyIcon height={15} width={15} fillColor="#fff" />
@@ -198,44 +177,29 @@ const Page = () => {
               </div>
               <div
                 className="hidden lg:flex items-start justify-center flex-col gap-x-2 bg-[#090E29] border-[0.3px] border-white px-6 rounded-lg cursor-pointer border-opacity-30 py-[.5625rem]"
-                onClick={() => copy(userData?.referral_code || "2436473")}
+                onClick={() => copy(userData?.data?.referral_code || "2436473")}
               >
                 <p className="text-white text-[.5rem]">Referral Code</p>
                 <div className="flex gap-3">
                   <p className="text-white max-w-[4rem] text-xxs truncate">
-                    {userData?.referral_code || "2436473"}
+                    {userData?.data?.referral_code || "2436473"}
                   </p>
                   <Button className="text-white px-0 py-[.0625rem] flex items-start bg-transparent text-xs font-medium">
                     <CopyIcon height={15} width={15} fillColor="#fff" />
                   </Button>
                 </div>
               </div>
-              <div className="lg:hidden w-full max-w-[150px] lg:max-w-[170px]">
-                <Select
-                  options={referralOption}
-                  value={selectedReferralOption}
-                  onChange={handleSelectChange}
-                  placeholder="Select Referral"
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  styles={style}
-                  isSearchable={false}
-                  components={{
-                    IndicatorSeparator: () => null,
-                  }}
-                />
-              </div>
-              <div className="">
+
+              {/* Buttons - Full width on mobile */}
+              <div className="flex gap-4 w-full lg:w-auto">
                 <Button
-                  className="bg-white text-[#2B3AA6] font-medium font-outfit text-sm h-[46px]"
-                  onClick={() => setWithdrawalModalOpen(true)}
+                  className="bg-white text-[#2B3AA6] font-medium font-outfit text-sm h-[46px] flex-1 lg:flex-none"
+                  onClick={() => setShowDepositModal(true)}
                 >
                   Deposit
                 </Button>
-              </div>
-              <div className="">
                 <Button
-                  className="bg-white text-[#2B3AA6] font-medium font-outfit text-sm h-[46px]"
+                  className="bg-white text-[#2B3AA6] font-medium font-outfit text-sm h-[46px] flex-1 lg:flex-none"
                   onClick={() => setWithdrawalModalOpen(true)}
                 >
                   Withdrawal
@@ -309,8 +273,19 @@ const Page = () => {
       <div className="mt-4">
         <ReturnOnInvestment />
       </div>
+      {
+       withdrawalModalOpen&& <WithdrawalModal
+        isOpen={withdrawalModalOpen}
+        walletBalance={String(userData?.data?.wallet_details?.main_balance )}
+        onClose={()=>setWithdrawalModalOpen(false)}
+        
+        />
+      }
+      {
+        showDepositModal && <DepositFundsModal isOpen={showDepositModal} onClose={()=>setShowDepositModal(false)}/>
+      }
     </div>
-  );
+  ); 
 };
 
 export default Page;

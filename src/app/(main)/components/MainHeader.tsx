@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import OpticalLogo from "@/app/icons/Logo";
 import RightArrowIcon from "@/app/icons/RightArrow";
 import { Button, LinkButton } from "@/components/core";
@@ -10,12 +10,35 @@ import { useActivePath } from '@/utils/navigation';
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/authentication";
 import { useQueryClient } from "react-query";
+import { tokenStorage } from "@/app/(auth)/(onboarding)/misc/utils";
+import Image from "next/image";
+import { CaretDown } from "@/components/icons";
+import DashboardIcon from "@/app/icons/(dashboard)/DashboardIcon";
 
 export const MainHeader = () => {
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isActive = useActivePath();
+ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+ const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   // Add scroll event listener
   useEffect(() => {
     const handleScroll = () => {
@@ -97,10 +120,12 @@ export const MainHeader = () => {
   };
   const queryClient = useQueryClient()
   const { replace } = useRouter();
-  const { authDispatch,authState } = useAuth();
+  const { authDispatch,authState:{user,isAuthenticated} } = useAuth();
  const handleLogOut = () => {
     if (authDispatch) authDispatch({ type: 'LOGOUT' });
     queryClient.clear();
+    tokenStorage.clearAll()
+    // tokenStorage.clearToken()
     replace('/login');
   };
   return (
@@ -141,13 +166,82 @@ export const MainHeader = () => {
         </nav>
 
 {
-  authState?.isAuthenticated ?  <Button className="bg-white text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center px-6 py-[0.625rem] font-outfit"
-  onClick={handleLogOut}
-  >
-        Logout
+  isAuthenticated ?  
+  
+ <div className="flex items-center gap-3 relative">
+      {/* Avatar */}
+      <div className="flex-shrink-0">
+        <div className="relative  rounded-full overflow-hidden bg-[#122251] text-white flex items-center justify-center w-[2rem] h-[2rem] md:w-[2.5rem] md:h-[2.5rem] border border-[#4453DD]/40"   onClick={toggleDropdown}>
+          {user?.profile_image ? (
+            <Image
+              alt=""
+              className="object-cover"
+              src={user.profile_image}
+              height={40}
+              width={40}
+            />
+          ) : (
+            <span className="text-sm font-medium">
+              {user?.full_name
+                ?.split(" ")
+                .map((n: string) => n[0])
+                .slice(0, 2)
+                .join("")
+                .toUpperCase()}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* User Info + Dropdown */}
+      <div className="relative" ref={dropdownRef}>
+       
+
+        {/* Dropdown */}
+        {isDropdownOpen && (
+          <div className="absolute right-0 top-[110%] w-40 bg-[#0F1B47] border border-[#2D3D8B]/30 rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="py-2">
+              {/* Mobile user info */}
+              <div className="sm:hidden px-4 py-2 border-b border-[#4453DD]/30">
+                <h3 className="text-white font-semibold text-sm">{user?.full_name ?? ""}</h3>
+                <p className="text-white/70 text-xs">{user?.email}</p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false)
+                  replace("/dashboard")
+                }}
+                className="w-full border-b-[0.3px] border-[#565656] text-left px-4 py-2 text-white/90 hover:bg-[#1A2A68] transition-colors font-verdana text-sm flex items-center gap-2"
+              >
+                <DashboardIcon/>
+                Dashboard
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false)
+                  handleLogOut()
+                }}
+                className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-500/20 transition-colors font-verdana text-sm flex items-center gap-2"
+              >
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
         
-        </Button> :
-        <Button className="bg-white text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center px-6 py-[0.625rem] font-outfit">
+         
+        
+        :
+        <Button className="bg-white text-sm text-[#2B3AA6] rounded-10 rounded-s-[24px] rounded-e-[24px] gap-4 flex items-center px-6 py-[0.625rem] font-outfit" onClick={()=>router.replace("/login")}>
           Get Started{" "}
           <svg
             width="16"
@@ -168,51 +262,122 @@ export const MainHeader = () => {
       </motion.header>
 
       {/* Mobile Header */}
-      <motion.header 
-        className={`flex justify-between lg:hidden fixed w-full bg-blue-900 px-4 md:px-[2rem] xl:px-[4.5rem] pt-[1rem] items-center py-6 pr-11 transition-all duration-300 ${
-          scrolled ? 'bg-opacity-95 backdrop-blur-sm shadow-lg' : 'bg-opacity-0'
-        } ${menuOpen ? '!z-[999999999999999]' : 'z-[9999999'}`}
-        initial={{ backgroundColor: "rgba(30, 58, 138, 0)" }}
-        animate={{ 
-          backgroundColor: scrolled ? "rgba(30, 58, 138, 0.95)" : "rgba(30, 58, 138, 0)",
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        <LinkButton
-          className="text-white font-verdana p-0 font-bold text-lg bg-transparent flex items-center gap-2"
-          href="/"
-        >
-          <OpticalLogo /> Opticraft
-        </LinkButton>
+     
+<motion.header 
+  className={`flex justify-between lg:hidden fixed w-full bg-blue-900 px-4 md:px-[2rem] xl:px-[4.5rem] pt-[1rem] items-center py-6 pr-4 transition-all duration-300 ${
+    scrolled ? 'bg-opacity-95 backdrop-blur-sm shadow-lg' : 'bg-opacity-0'
+  } ${menuOpen ? '!z-[9999999999999999999]' : 'z-[9999999'}`}
+  initial={{ backgroundColor: "rgba(30, 58, 138, 0)" }}
+  animate={{ 
+    backgroundColor: scrolled ? "rgba(30, 58, 138, 0.95)" : "rgba(30, 58, 138, 0)",
+  }}
+  transition={{ duration: 0.3 }}
+>
+  {/* Left: Logo */}
+  <LinkButton
+    className="text-white font-verdana p-0 font-bold text-lg bg-transparent flex items-center gap-2"
+    href="/"
+  >
+    <OpticalLogo /> 
+    <span>Opticraft</span>
+  </LinkButton>
 
-        <motion.button
-          onClick={() => setMenuOpen((prev) => !prev)}
-          className="text-white focus:outline-none z-50 relative"
-          aria-label="Toggle menu"
-          whileTap={{ scale: 0.9 }}
+  {/* Right: Avatar + Hamburger */}
+  <div className="flex items-center gap-2 pr-4">
+    {/* Avatar Dropdown (only if authenticated) */}
+    {isAuthenticated && (
+      <div className="relative" ref={dropdownRef}>
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={toggleDropdown}
         >
-          <div className="relative w-6 h-6">
-            <motion.span
-              className="absolute bg-white h-0.5 w-full rounded-full"
-              style={{ top: "30%" }}
-              animate={menuOpen ? { rotate: 45, y: 3 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-            <motion.span
-              className="absolute bg-white h-0.5 w-full rounded-full"
-              style={{ top: "50%" }}
-              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-              transition={{ duration: 0.2 }}
-            />
-            <motion.span
-              className="absolute bg-white h-0.5 w-full rounded-full"
-              style={{ top: "70%" }}
-              animate={menuOpen ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2 }}
-            />
+          <div   onClick={toggleDropdown} className="relative rounded-full overflow-hidden bg-[#122251] text-white flex items-center justify-center w-[2rem] h-[2rem] border border-[#4453DD]/40">
+            {user?.profile_image ? (
+              <Image
+                alt=""
+                className="object-cover"
+                src={user.profile_image}
+                height={32}
+                width={32}
+              />
+            ) : (
+              <span className="text-xs font-medium">
+                {user?.full_name
+                  ?.split(" ")
+                  .map((n: string) => n[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()}
+              </span>
+            )}
           </div>
-        </motion.button>
-      </motion.header>
+        
+        </div>
+
+        {isDropdownOpen && (
+          <div className="absolute right-0 top-[110%] w-40 bg-[#0F1B47] border border-[#2D3D8B]/30 rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="py-2">
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false)
+                  replace("/dashboard")
+                }}
+                className="w-full border-b-[0.3px] border-[#565656] text-left px-4 py-2 text-white/90 hover:bg-[#1A2A68] transition-colors text-sm flex items-center gap-2"
+              >
+                <DashboardIcon/>
+                Dashboard
+              </button>
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false)
+                  handleLogOut()
+                }}
+                className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-500/20 transition-colors text-sm flex items-center gap-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 21H5C4.47 21 3.96 20.79 3.59 20.41C3.21 20.04 3 19.53 3 19V5C3 4.47 3.21 3.96 3.59 3.59C3.96 3.21 4.47 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* Hamburger */}
+    <motion.button
+      onClick={() => setMenuOpen((prev) => !prev)}
+      className="text-white focus:outline-none z-50 relative"
+      aria-label="Toggle menu"
+      whileTap={{ scale: 0.9 }}
+    >
+      <div className="relative w-6 h-6">
+        <motion.span
+          className="absolute bg-white h-0.5 w-full rounded-full"
+          style={{ top: "30%" }}
+          animate={menuOpen ? { rotate: 45, y: 3 } : { rotate: 0, y: 0 }}
+          transition={{ duration: 0.2 }}
+        />
+        <motion.span
+          className="absolute bg-white h-0.5 w-full rounded-full"
+          style={{ top: "50%" }}
+          animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        />
+        <motion.span
+          className="absolute bg-white h-0.5 w-full rounded-full"
+          style={{ top: "70%" }}
+          animate={menuOpen ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }}
+          transition={{ duration: 0.2 }}
+        />
+      </div>
+    </motion.button>
+  </div>
+</motion.header>
+
 
       {/* Mobile Dropdown with Creative Animation */}
       <AnimatePresence>
@@ -302,8 +467,8 @@ export const MainHeader = () => {
                   </motion.li>
                 ))}
 
-                <motion.li variants={itemVariants} className="mt-8">
-                  <Button className="bg-white text-[#2B3AA6] rounded-lg gap-3 flex items-center px-5 py-2 font-outfit">
+                {!isAuthenticated?<motion.li variants={itemVariants} className="mt-8">
+                  <Button className="bg-white text-[#2B3AA6] rounded-lg gap-3 flex items-center px-5 py-2 font-outfit" onClick={()=>router.replace("/login")}>
                     Get Started
                     <motion.div
                       animate={{ x: [0, 3, 0] }}
@@ -313,6 +478,29 @@ export const MainHeader = () => {
                     </motion.div>
                   </Button>
                 </motion.li>
+                :
+
+                
+               <LinkButton
+                      className={`text-white font-outfit bg-transparent text-lg font-normal py-2 relative group flex items-center ${
+                        isActive("/dashboard") ? 'after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white' : ''
+                      }`
+                    }
+                      href={"/dashboard"}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <span className="relative">
+                        Dashboard
+                        {!isActive("/dashboard") && (
+                          <motion.span
+                            className="absolute bottom-0 left-0 w-0 h-0.5 bg-white"
+                            whileHover={{ width: "100%" }}
+                            transition={{ duration: 0.2 }}
+                          />
+                        )}
+                      </span>
+                    </LinkButton>
+              }
               </ul>
             </nav>
           </motion.div>

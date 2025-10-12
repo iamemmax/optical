@@ -7,7 +7,6 @@ import UserBvnDetails from "../../components/signup/UserBvnDetails";
 import UserOtpVerification from "../../components/signup/UserOtpVerification";
 import FacialVerification from "../../components/signup/FacialVerification";
 import CreateWidthralPin from "../../components/signup/CreateWidthrawalPin";
-import CreatePasswordDetails from "../../components/signup/CreatePassword";
 import OnboardingSuccessPage from "../../components/shared/OnboardingSuccessPagr";
 
 
@@ -20,9 +19,9 @@ export interface resetprop {
 
 }
 
-const ForgetPassword = () => {
+const SignUpScreen = () => {
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState("");
+  const [CC, setEmail] = useState("");
   const [bvn, setBvn] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("")
  
@@ -65,6 +64,7 @@ const ForgetPassword = () => {
          setBvn={setBvn}
          onNext={() => setStep(3)}
          onPrev={() => setStep(1)}
+         email={email}
          />
         </motion.div>
       )}
@@ -122,7 +122,7 @@ const ForgetPassword = () => {
         />
         </motion.div>
       )}
-      {step === 6 && (
+      {/* {step === 6 && (
         <motion.div
         animate="animate"
         className="h-full"
@@ -140,8 +140,8 @@ const ForgetPassword = () => {
       />
           
         </motion.div>
-      )}
-      {step === 7 && (
+      )} */}
+      {step === 6 && (
         <motion.div
         animate="animate"
         className="h-full"
@@ -165,4 +165,4 @@ const ForgetPassword = () => {
   );
 };
 
-export default ForgetPassword;
+export default SignUpScreen;

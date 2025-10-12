@@ -45,6 +45,8 @@ export interface LoginResponse {
   };
 
 }
+
+
 export interface UserDataTypes {
   id: number;
   full_name: string;
@@ -60,6 +62,15 @@ export interface UserDataTypes {
   onboarding_stage: string;
   profile_image: null;
   account_security_perc: number;
+  onboarding_progress: Onboardingprogress;
+}
+
+interface Onboardingprogress {
+  signup_completetd: boolean;
+  password_set: boolean;
+  bvn_verified: boolean;
+  face_verified: boolean;
+  has_withdrawal_pin: boolean;
 }
 
 interface Walletdetails {

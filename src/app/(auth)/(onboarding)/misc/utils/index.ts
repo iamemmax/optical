@@ -60,12 +60,12 @@ export const tokenStorage = {
     return tokens ? JSON.parse(tokens) : null;
   },
 
-  setContestantDetails: (details: { name: string; contestant_id: number; contestant_attr: string }) => {
-    window.localStorage.setItem(
-      `${TOKEN_STORAGE_PREFIX}CONTESTANT_DETAILS`,
-      JSON.stringify(details)
-    );
-  },
+  // setContestantDetails: (details: { name: string; contestant_id: number; contestant_attr: string }) => {
+  //   window.localStorage.setItem(
+  //     `${TOKEN_STORAGE_PREFIX}CONTESTANT_DETAILS`,
+  //     JSON.stringify(details)
+  //   );
+  // },
 
   getContestantDetails: () => {
     const details = window.localStorage.getItem(`${TOKEN_STORAGE_PREFIX}CONTESTANT_DETAILS`);
@@ -74,7 +74,6 @@ export const tokenStorage = {
 
   clearAll: () => {
     window.localStorage.removeItem(`${TOKEN_STORAGE_PREFIX}TOKENS`);
-    window.localStorage.removeItem(`${TOKEN_STORAGE_PREFIX}CONTESTANT_DETAILS`);
     window.localStorage.removeItem(`${TOKEN_STORAGE_PREFIX}SAVED_LOGIN_CREDENTIALS`);
   }
 };

@@ -78,39 +78,39 @@ const InvestmentPage = () => {
   return (
     <div className=" ">
       <div className="bg-[#090E29] w-full border-[0.3px] border-[#4453DD] rounded-10 p-6">
-        <div className="flex justify-between w-full flex-wrap items-center">
-          <div className="flex items-center gap-3">
-            <h2 className="text-white font-verdana font-bold text-2xl">
-              My Investment
-            </h2>
-            <div className="max-w-[8.75rem]">
-              <Select
-                className="w-full rounded-lg capitalize"
-                components={{
-                  IndicatorSeparator: () => null,
-                }}
-                defaultValue={filterStatus.find(
-                  (option) => option.value === selectedOption?.value
-                )}
-                options={filterStatus}
-                styles={selectStyle}
-                isSearchable={false}
-                onChange={handleOption}
-              />
-            </div>
-          </div>
+       <div className="flex flex-col space-y-4 w-full md:flex-row md:justify-between md:items-center md:space-y-0">
+  {/* Left Section - Title and Select */}
+  <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3 lg:space-x-4">
+    <h2 className="text-white font-verdana font-bold text-xl sm:text-2xl">
+      My Investment
+    </h2>
+    <div className="w-full sm:w-auto sm:max-w-[8.75rem]">
+      <Select
+        className="w-full rounded-lg capitalize"
+        components={{
+          IndicatorSeparator: () => null,
+        }}
+        defaultValue={filterStatus.find(
+          (option) => option.value === selectedOption?.value
+        )}
+        options={filterStatus}
+        styles={selectStyle}
+        isSearchable={false}
+        onChange={handleOption}
+      />
+    </div>
+  </div>
 
-          <div className="flex items-center  gap-4">
-            <div className="">
-              <Button
-                className="bg-white text-[#2B3AA6] font-outfit text-sm h-[46px]"
-                onClick={() => setWithdrawalModalOpen(true)}
-              >
-                Add New Investment
-              </Button>
-            </div>
-          </div>
-        </div>
+  {/* Right Section - Button */}
+  <div className="w-full sm:w-auto">
+    <Button
+      className="w-full sm:w-auto bg-white text-[#2B3AA6] font-outfit text-sm md:text-base h-[46px] px-4 md:px-6"
+      onClick={() => setWithdrawalModalOpen(true)}
+    >
+      Add New Investment
+    </Button>
+  </div>
+</div>
 
         {isLoadingOverview ? (
           <div className="flex justify-center items-center py-10">
@@ -156,7 +156,7 @@ const InvestmentPage = () => {
             <button
               key={tab}
               className={cn(
-                "py-4 pt-8 px-6 text-white md:text-base text-base font-outfit font-medium transition-all",
+                "py-4 pt-8 md:px-6 px-3 text-white text-sm md:text-base  font-outfit font-medium transition-all",
                 activeTab === tab
                   ? "border-b-4 border-[#5879FD]"
                   : "text-gray-400 hover:text-white"

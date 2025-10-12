@@ -115,7 +115,7 @@ const FaqSection = () => {
             className="mt-5"
           >
             <div className="flex gap-4 mt-6">
-              <LinkButton href={"#"} className="flex items-center gap-2 bg-white text-[#0A0B20] max-sm:text-xxs hover:bg-gray-200 transition-colors max-xxscren:px-2 px-4 py-2 rounded-10 font-bold">
+              <LinkButton href={"/contact"} className="flex items-center gap-2 bg-white text-[#0A0B20] max-sm:text-xxs hover:bg-gray-200 transition-colors max-xxscren:px-2 px-4 py-2 rounded-10 font-bold">
                 Contact Sales
                 <svg
                   width="24"
@@ -131,8 +131,8 @@ const FaqSection = () => {
                   />
                 </svg>
               </LinkButton>
-              <LinkButton href={"#"}
-                className="flex items-center  max-sm:text-xxs gap-2 bg-transparent text-whit border-white border-opacity-50 hover:bg-gray-200 transition-colors  max-xxscren:px-2 px-4 py-2 rounded-10 font-bold"
+              <LinkButton href={"/faqs"}
+                className="flex items-center  max-sm:text-xxs gap-2 bg-transparent text-whit border-white border-opacity-50 hover:bg-gray-200 transition-colors  max-xxscren:px-2 hover:text-black px-4 py-2 rounded-10 font-bold"
                 variant={"outlined"}>
               
                 See More Questions

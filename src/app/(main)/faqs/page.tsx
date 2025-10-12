@@ -11,6 +11,8 @@ import NetworkIcon from "@/app/icons/NetworlIcon";
 import GetReadyBanner from "../components/GetReadyBanner";
 import DebounceInput from "../components/util/DebounceInput";
 import TopMarquee from "../components/TopMaquee";
+import { useAuth } from "@/contexts/authentication";
+import { useRouter } from "next/navigation";
 
 
 const bannerItemArray = [
@@ -149,8 +151,8 @@ const FaqPage = () => {
   };
 
 
-
-
+const {authState:{isAuthenticated}}=useAuth()
+const router = useRouter()
 
 
   return (
@@ -249,7 +251,7 @@ bg-no-repeat bg-cover"
      
 
       {/* Footer */}
-      <GetReadyBanner buttonName="Get Started" heading="Ready to invest smarter and scale faster on Opticraft Platform and enjoy maximum profit ?"/>
+            <GetReadyBanner buttonName="Get Started" heading="Ready to invest smarter and scale faster on Opticraft Platform and enjoy maximum profit ?" onclick={()=> isAuthenticated ? router.push("/dashboard/investment") : router.push("/login")}/>
       <Footer />
     </div>
   );

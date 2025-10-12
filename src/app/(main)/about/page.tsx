@@ -9,6 +9,8 @@ import UserGroupIcon from "@/app/icons/UserGroupIcon";
 import CheckIcon from "@/app/icons/CheckIcon";
 import NetworkIcon from "@/app/icons/NetworlIcon";
 import GetReadyBanner from "../components/GetReadyBanner";
+import { useAuth } from "@/contexts/authentication";
+import { useRouter } from "next/navigation";
 
 // Move TopMarquee inside the component or make it a separate component file
 const TopMarquee = () => {
@@ -25,7 +27,7 @@ const TopMarquee = () => {
         setWidth(marqueeRef.current.scrollWidth / 3);
       }
     };
-
+    
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -51,15 +53,15 @@ const TopMarquee = () => {
     "Trading Signals",
     "Invoice Discounting",
   ];
-
+  
   return (
-    <motion.div className="flex py-6 bg-[#0C083F] w-full  gap-[.625rem] overflow-x-hidden  z-[99] -mt-[1.8rem]">
+    <motion.div className="flex py-6 bg-[#0C083F] w-full  gap-[.625rem] overflow-x-hidden   -mt-[1.8rem]">
       {navItems.map((item, index) => (
         <motion.div
-          ref={marqueeRef}
-          animate={{
-            x: [-width, 0],
-          }}
+        ref={marqueeRef}
+        animate={{
+          x: [-width, 0],
+        }}
           transition={{
             x: {
               duration: getAnimationDuration(),
@@ -70,7 +72,7 @@ const TopMarquee = () => {
           }}
           key={index}
           className="flex items-center flex-nowrap  text-white"
-        >
+          >
           <div className="flex items-center gap-2">
             <span className="mr-2 text-nowrap text-sm font-outfit">{item}</span>
             <CheckIcon />
@@ -82,6 +84,9 @@ const TopMarquee = () => {
 };
 
 const AboutPage = () => {
+  const {authState}=useAuth()
+  const router = useRouter()
+  const {isAuthenticated}=authState
   const bannerItemArray = [
     {
       icon: <UserGroupIcon />,
@@ -286,8 +291,8 @@ bg-no-repeat bg-cover"
       </motion.section>
 
       {/* Footer */}
-      <GetReadyBanner buttonName="Get Started" heading="Ready to invest smarter and scale faster on Opticraft Platform and enjoy maximum profit ?"/>
-      <Footer />
+      <GetReadyBanner buttonName="Get Started" heading="Ready to invest smarter and scale faster on Opticraft Platform and enjoy maximum profit ?" onclick={()=> isAuthenticated ? router.push("/dashboard/investment") : router.push("/login")}/>
+       <Footer />
     </div>
   );
 };

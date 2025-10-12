@@ -441,7 +441,7 @@ const user = useUser()
             ></ErrorModal>
 
             {
-              showWidthrawalModal && <UserWidthdrawalOtpVerification isOpen={showWidthrawalModal} onClose={()=>setShowWidthrawalModal(false)}/>
+              showWidthrawalModal && <UserWidthdrawalOtpVerification isOpen={showWidthrawalModal} onClose={()=>setShowWidthrawalModal(false)} email={user?.data?.email??""}/>
             }
     </div>
   )

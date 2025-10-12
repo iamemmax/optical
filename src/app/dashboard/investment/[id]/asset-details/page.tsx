@@ -1,19 +1,35 @@
 "use client";
+import { useUser } from '@/app/(auth)/(onboarding)/api/getUserDetails';
+import WithdrawalModal from '@/app/dashboard/(dashboard)/components/referral/WithdrawalModal';
 import { useGetInvestmentAssetDetails } from '@/app/dashboard/misc/api/investment/fetchInvestmentAssetDetails';
-import { addCommasToNumber } from '@/utils';
+import { useReInvestment } from '@/app/dashboard/misc/api/investment/reinvest';
+import { useErrorModalState } from '@/hooks';
+import { SmallSpinner } from '@/icons/core';
+import { addCommasToNumber, formatAxiosErrorMessage } from '@/utils';
 import { formatValue } from '@/utils/enums';
 import { convertKebabAndSnakeToTitleCase } from '@/utils/strings';
+import { AxiosError } from 'axios';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const TradingDashboard = () => {
+   const {
+            isErrorModalOpen,
+            setErrorModalState,
+            openErrorModalWithMessage,
+            errorModalMessage,
+          } = useErrorModalState();
   const safeAddCommasToNumber = (num:number) => {
   const number = Number(num);
   if (isNaN(number)) return '0';
   return number?.toLocaleString();
 };
   const params = useParams()
+      const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
+      const {data:userData}= useUser()
+  
   const {data:assetDetails }=useGetInvestmentAssetDetails(String(params?.id))
  
     const performanceData = React.useMemo(() => {
@@ -79,6 +95,23 @@ const TradingDashboard = () => {
     },
     
   ]
+const {mutate:handleInvestment, isLoading} = useReInvestment()
+
+  const onSubmit = () => {
+    handleInvestment({
+  investment_id:String(params?.id)
+    },{
+  
+      onSuccess:()=>{
+  toast.success("Investment Added Successfully")
+         
+      },
+      onError: (error) => {
+          const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+           openErrorModalWithMessage(String(errorMessage))
+      }
+    })
+    };
 
   return (
     <div className="p-4 md:p-6">
@@ -93,11 +126,13 @@ const TradingDashboard = () => {
               </span>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <button className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors w-full sm:w-auto">
+              <button className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors w-full sm:w-auto"
+              onClick={()=>setWithdrawalModalOpen(true)}
+              >
                 Withdraw
               </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto">
-                Reinvest/Top up
+              <button className="px-4 py-2 bg-white text-black text-sm rounded-lg hover:scale-95 flex items-center justify-center gap-x-2 transition-colors w-full sm:w-auto" onClick={onSubmit}>
+                Reinvest/Top up {isLoading&&<SmallSpinner color='blue'/>}
               </button>
             </div>
           </div>
@@ -240,6 +275,12 @@ const TradingDashboard = () => {
           </div>
         </div>
       </div>
+
+      {withdrawalModalOpen&& <WithdrawalModal 
+          isOpen={withdrawalModalOpen}
+          onClose={() => setWithdrawalModalOpen(false)}
+          walletBalance={String(userData?.wallet_details?.main_balance)}
+      />}
     </div>
   );
 };

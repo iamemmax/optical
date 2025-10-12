@@ -1,6 +1,6 @@
 "use client"
 import { LinkButton } from '@/components/core'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import OpticalLogo from '../icons/Logo'
 import HomeIcon from '../icons/HomeIcon'
 
@@ -22,7 +22,6 @@ const OnboardingLayout = ({
     
     return () => window.removeEventListener('resize', appHeight);
   }, []);
-
   return (
     <div className={`w-full h-[100vh] bg-[url('/images/homepage/landing-page-bg.svg')]  overflow-hidden grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] `}  style={{ height: 'var(--app-height)' }}>
       <div className="w-full h-[100vh] bg-[#02010D]  flex flex-col overflow-hidden">
@@ -39,6 +38,7 @@ const OnboardingLayout = ({
             </LinkButton>
           </div>
         </div>
+   
         
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto px-4 md:px-[2rem]   flex justify-center items-center  pb-[2.625rem]">

@@ -220,16 +220,42 @@ const durationArray =  ["THREE_MONTHS", "SIX_MONTHS"]
 
             {/* Amount to Invest */}
             <div>
-              <label className="block text-white text-sm mb-3 font-medium">Amount to Invest</label>
-              <input
-                {...register('amount')}
-                type="text"
-                placeholder="₦12,000"
-                className={`w-full bg-[#0A0B1A] border-[0.5px] ${errors.amount ? 'border-red-500' : 'border-[#333]'} rounded-lg px-4 h-[50px] text-white placeholder-gray-400 text-sm`}
-              />
-              {errors.amount && (
-                <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
-              )}
+             <Controller
+  name="amount"
+  control={control}
+  render={({ field }) => (
+    <div>
+      <label className="block text-white text-sm mb-3 font-medium">
+        Amount to Invest
+      </label>
+      <input
+        {...field}
+        type="text"
+        placeholder="₦12,000"
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          const validNumber = target.value.replace(/[^0-9]/g, "");
+          field.onChange(validNumber);
+        }}
+        onPaste={(e) => {
+          e.preventDefault();
+          const pastedValue = e.clipboardData.getData("text");
+          const sanitizedValue = pastedValue.replace(/[^0-9]/g, "");
+          field.onChange(sanitizedValue);
+        }}
+        className={`w-full outline-none bg-[#0A0B1A] border-[0.5px] ${
+          errors.amount ? "border-red-500" : "border-[#333]"
+        } rounded-lg px-4 h-[50px] text-white placeholder-gray-400 text-sm`}
+      />
+      {errors.amount && (
+        <p className="text-red-500 text-xs mt-1">
+          {errors.amount.message}
+        </p>
+      )}
+    </div>
+  )}
+/>
+            
             </div>
 
             {/* Duration */}

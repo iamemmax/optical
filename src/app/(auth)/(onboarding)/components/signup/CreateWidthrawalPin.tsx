@@ -11,17 +11,19 @@ import { useSetWidthrawalPin } from "../../api/sign-up/setWidthrawalPin";
 import { useErrorModalState } from "@/hooks";
 import { formatAxiosErrorMessage } from "@/utils";
 import { AxiosError } from "axios";
+import { useQueryClient } from "react-query";
 
 interface prop {
    email: string
   phone_number: string;
   onNext: (value: SetStateAction<number>) => void;
   onPrev: (value: SetStateAction<number>) => void;
+   openFrom?:"onboarding"| "dashboard"
 }
 
 export type UserWidrawalDetailsValue = z.infer<typeof createWidthrawalPin>;
 
-const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
+const CreateWidthralPin = ({ onNext, phone_number,email,openFrom="onboarding" }: prop) => {
   const {
     isErrorModalOpen,
     setErrorModalState,
@@ -42,6 +44,7 @@ const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
     mode: "onChange",
   });
 
+  const queryClient = useQueryClient()
   const onSubmit = ({ pin }: UserWidrawalDetailsValue) => {
     if (isValid) {
       handleSetpin(
@@ -53,6 +56,7 @@ const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
         {
           onSuccess: () => {
             onNext(6); // Move to next step only on success
+            queryClient.invalidateQueries({queryKey:["user-details"]})
           },
           onError: (error) => {
             const errorMessage = formatAxiosErrorMessage(error as AxiosError);
@@ -69,7 +73,7 @@ const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
     setValue("pin", pin);
   };
   return (
-    <div className="text-white relative border-[.0187rem] py-6 xl:py-[4.5rem]  border-[#4649E5] px-6 md:px-[50px] 2xl:px-[6.1875rem] rounded-[1.25rem]">
+    <div className={`text-white relative border-[.0187rem] w-full border-[#4649E5] ${openFrom==="onboarding"?"px-6  py-6 xl:py-[4.5rem] md:px-[50px] 2xl:px-[6.1875rem]":"px-6 py-[3.5rem]"} rounded-[1.25rem] `}>
       <div className="">
         <h2 className="text-white font-verdana font-bold text-[1.25rem] xl:text-[1.75rem]">
           Withdrawal Pin
@@ -77,16 +81,16 @@ const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
         <p className="font-outfit max-xxscren:text-xs text-sm xl:text-base text-white text-opacity-70 max-w-[250px] lg:max-w-[380px] font-light">
           Create your unique pin for withdrawal.
         </p>
-        <div className="absolute max-xxscren:right-3 right-10 xl:right-16 top-14">
+        {openFrom==="onboarding"&&<div className="absolute max-xxscren:right-3 right-10 xl:right-16 top-14">
           <p className="font-outfit font-semibold text-white text-xs xl:text-base">
             5/6
           </p>
-        </div>
+        </div>}
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-[22.5rem]">
-        <div className="mt-[2.625rem]">
-          <div className="mt-3 ">
+        <div className="mt-[2.625rem] w-full">
+          <div className="mt-3 w-full ">
             <Controller
               name="pin"
               control={control}
@@ -110,8 +114,8 @@ const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
                     border: "transparent",
                     fontSize: isMobile ? "0.75rem" : "0.875rem",
                     transition: "all 0.45s ease-in-out",
-                    width: isMobile ? "2.7rem" : "3.375rem",
-                    height: isMobile ? "2.7rem" : "3.375rem",
+                     width: isMobile ? "2.2rem" : openFrom==="onboarding"?"3.3rem":"3rem",
+                    height: isMobile ? "2.2rem" : openFrom==="onboarding"?"3.3rem":"3rem",
                   }}
                   length={6}
                   style={{
@@ -131,20 +135,20 @@ const CreateWidthralPin = ({ onNext, phone_number,email }: prop) => {
 
           {/* <Countdown onTimeUp={handleTimeUp} reset={resetTimer} /> */}
         </div>
-        <div className="mt-[4.5rem] flex flex-col pb-[2.75rem]">
+        <div className="mt-[4.5rem] w-full flex flex-col pb-[2.75rem]">
           <Button
             className="w-full bg-white text-[#2B3AA6] h-11 rounded-10 font-outfit text-sm "
             type="submit"
           >
             Create
           </Button>
-          <LinkButton
+          {openFrom==="onboarding"&&<LinkButton
             className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm "
             href={"/"}
             variant={"outlined"}
           >
             Skip
-          </LinkButton>
+          </LinkButton>}
         </div>
       </form>
 

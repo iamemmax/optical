@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogBody } from '@/components/core';
+import React, { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogBody, ErrorModal } from '@/components/core';
 import { Button } from '@/components/core/Button';
 import CloseIcon from '@/app/icons/CloseIcon';
 import EyeIcon from '@/app/icons/EyeIcon';
@@ -9,10 +9,19 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { withdrawalSchema } from '@/app/schema/WithdrawalSchema';
+import { useFetchBankList } from '@/app/dashboard/misc/api/payment/fetchBankList';
+import { useFetchAccountName } from '@/app/dashboard/misc/api/payment/getBankAccountName';
+import { useErrorModalState } from '@/hooks';
+import { formatAxiosErrorMessage } from '@/utils';
+import { AxiosError } from 'axios';
+import Select from "react-select";
+import { OptionType, selectStyle, selectStyle2 } from '@/utils/selectStyles';
+import { SmallSpinner } from '@/icons/core';
+import WidthrawalPinModal from './WithrawalPin';
 
 
 
-type WithdrawalFormValues = z.infer<typeof withdrawalSchema>;
+export type WithdrawalFormValues = z.infer<typeof withdrawalSchema>;
 
 interface WithdrawalModalProps {
   isOpen: boolean;
@@ -26,19 +35,29 @@ const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
   walletBalance,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
-
+  const [showWithdrawalPinModal, setShowWithdrawalPinModal] = useState(false)
+  const [withdrawalPayload, setWithdrawalPayload] = useState<WithdrawalFormValues>({ account_name: "", account_number: "", amount: "", bank_code: "", narration: "" })
+  const {
+    isErrorModalOpen,
+    setErrorModalState,
+    openErrorModalWithMessage,
+    errorModalMessage,
+  } = useErrorModalState();
+  const { data, isLoading } = useFetchBankList()
   const {
     control,
     handleSubmit,
     register,
+    watch,
+    setValue,
     formState: { errors, isValid },
     reset
   } = useForm<WithdrawalFormValues>({
     resolver: zodResolver(withdrawalSchema),
     defaultValues: {
-      bank: 'Zenith Bank',
-      accountNumber: '',
-      accountName: '',
+      bank_code: '',
+      account_number: '',
+      account_name: '',
       amount: '',
       narration: '',
     },
@@ -49,26 +68,62 @@ const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
     setShowBalance(!showBalance);
   };
 
-  const onSubmit = (data: WithdrawalFormValues) => {
-    console.log('Form submitted:', data);
-    // Here you would typically make an API call
-    
-    // Reset form and close modal
-    reset();
-    onClose();
+  // useEffect(() => {
+  //   if(isError)
+  // }, [isError])
+
+  const watchAcctNo = watch("account_number")
+  const bankCode = watch("bank_code")
+
+  const { mutate: handleFetchAccountName, isLoading: isLoadingAcctName } = useFetchAccountName()
+  const onSubmit = ({ account_name, account_number, amount, bank_code, narration }: WithdrawalFormValues) => {
+    setWithdrawalPayload({
+      account_name, account_number, amount, bank_code, narration
+    })
+    setShowWithdrawalPinModal(true)
   };
 
+
+  useEffect(() => {
+    if (bankCode && watchAcctNo?.length === 10) {
+      handleFetchAccountName({
+        account_number: watchAcctNo,
+        bank_code: bankCode
+      }, {
+        onSuccess: (data) => {
+          if (data) {
+            setValue("account_name", data?.data?.account_name)
+          }
+        },
+        onError: (error) => {
+          const errorMessage = formatAxiosErrorMessage(error as AxiosError);
+          openErrorModalWithMessage(String(errorMessage));
+        },
+      })
+    }
+  }, [watchAcctNo, bankCode])
+
+  const bankList = data?.banks_list?.map((bank) => {
+    return {
+      id: bank?.id,
+      label: bank?.name,
+      value: bank?.code
+    }
+  })
+
+
   return (
+    <>
       <Dialog open={isOpen}>
         <DialogContent className="bg-[#02010D] border-[#4649E5] rounded-[1rem] border-[0.5px] p-0 max-w-md w-full">
           <DialogBody className="p-6 py-[2.625rem]">
             <div className="flex justify-between items-center mb-1">
               <h2 className="text-white text-lg font-outfit font-medium">Withdraw Funds</h2>
-              <Button 
+              <Button
                 onClick={onClose}
                 className="bg-transparent p-0 border-none transition-colors"
               >
-              <CloseIcon/>
+                <CloseIcon />
               </Button>
             </div>
             <p className="text-white/70 text-sm mb-6 max-w-[18.4375rem]">
@@ -86,12 +141,12 @@ const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
                     ) : (
                       <span className="text-xl text-white font-bold">••••••••••</span>
                     )}
-                    <Button 
+                    <Button
                       type="button"
                       className="text-white/70 hover:text-white"
                       onClick={toggleShowBalance}
                     >
-                      <EyeIcon/>
+                      <EyeIcon />
                     </Button>
                   </div>
                 </div>
@@ -102,71 +157,128 @@ const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
                 <label className="block text-white text-sm mb-2">Select Bank</label>
                 <div className="relative">
                   <Controller
-                    name="bank"
+                    name="bank_code"
                     control={control}
                     render={({ field }) => (
-                      <select
-                        {...field}
-                        className={`w-full bg-[#02010D] border-[0.3px] ${errors.bank ? 'border-red-500' : 'border-[#696969]'} rounded-lg px-4 h-[44px] text-white appearance-none`}
-                      >
-                        <option value="Zenith Bank">Zenith Bank</option>
-                        <option value="GTBank">GTBank</option>
-                        <option value="First Bank">First Bank</option>
-                        <option value="Access Bank">Access Bank</option>
-                        <option value="UBA">UBA</option>
-                      </select>
+                      <Select
+                        className="w-full !h-[45px] rounded-lg capitalize"
+                        components={{
+                          IndicatorSeparator: () => null,
+                        }}
+                        value={bankList?.find(option => option.value === field.value) || null}
+                        options={bankList}
+                        styles={selectStyle2}
+                        isSearchable={true}
+                        isLoading={isLoading}
+                        onChange={(selectedOption) => {
+                          field.onChange(selectedOption?.value || ''); // Update form field
+                          // handleOption(selectedOption); // Your custom handler
+                        }}
+                        placeholder="Select a bank..."
+                      />
                     )}
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                  </div>
+                  {errors.bank_code && (
+                    <p className="text-red-500 text-xs mt-1">{errors.bank_code.message}</p>
+                  )}
                 </div>
-                {errors.bank && (
-                  <p className="text-red-500 text-xs mt-1">{errors.bank.message}</p>
-                )}
               </div>
 
               {/* Account Number */}
-              <div className="mb-4">
-                <label className="block text-white text-sm mb-2">Account Number</label>
-                <input
-                  {...register('accountNumber')}
-                  type="text"
-                  placeholder="1096386723"
-                  className={`w-full bg-[#02010D] border-[0.3px] ${errors.accountNumber ? 'border-red-500' : 'border-[#696969]'} rounded-lg px-4 h-[44px] text-white placeholder-white/30`}
-                />
-                {errors.accountNumber && (
-                  <p className="text-red-500 text-xs mt-1">{errors.accountNumber.message}</p>
-                )}
-              </div>
+        
+
+<Controller
+  name="account_number"
+  control={control}
+  render={({ field }) => (
+    <div>
+      <label className="block text-white text-sm mb-4 font-medium">
+      Account Number
+      </label>
+      <input
+        {...field}
+        type="text"
+        placeholder="1096386723"
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          const validNumber = target.value.replace(/[^0-9]/g, "");
+          field.onChange(validNumber);
+        }}
+        onPaste={(e) => {
+          e.preventDefault();
+          const pastedValue = e.clipboardData.getData("text");
+          const sanitizedValue = pastedValue.replace(/[^0-9]/g, "");
+          field.onChange(sanitizedValue);
+        }}
+        className={`w-full bg-transparent border-[0.5px] ${
+          errors.account_number ? "border-red-500" : "border-[#333]"
+        } rounded-lg px-4 h-[45px] text-white placeholder-gray-400 text-sm`}
+      />
+      {errors.account_number && (
+        <p className="text-red-500 text-xs mt-1">
+          {errors.account_number.message}
+        </p>
+      )}
+    </div>
+  )}
+/>
+
 
               {/* Account Name */}
-              <div className="mb-4">
-                <label className="block text-white text-sm mb-2">Account Name</label>
-                <input
-                  {...register('accountName')}
-                  type="text"
-                  placeholder=""
-                  className={`w-full bg-[#02010D] border-[0.3px] ${errors.accountName ? 'border-red-500' : 'border-[#696969]'} rounded-lg px-4 h-[44px] text-white placeholder-white/30`}
-                />
-                {errors.accountName && (
-                  <p className="text-red-500 text-xs mt-1">{errors.accountName.message}</p>
-                )}
+              <div className="mb-4 mt-2">
+                {isLoadingAcctName ? <div className='flex justify-center items-center py-2'><SmallSpinner color='#fff' /></div> : <>
+                  <label className="block text-white text-sm mb-2">Account Name</label>
+                  <input
+                    {...register('account_name')}
+                    readOnly
+                    type="text"
+                    placeholder=""
+                    className={`w-full bg-[#02010D] border-[0.3px] ${errors.account_name ? 'border-red-500' : 'border-[#696969]'} rounded-lg px-4 h-[44px] text-white placeholder-white/30`}
+                  />
+                  {errors.account_name && (
+                    <p className="text-red-500 text-xs mt-1">{errors.account_name.message}</p>
+                  )}
+                </>}
               </div>
+
 
               {/* Amount */}
               <div className="mb-4">
-                <label className="block text-white text-sm mb-2">Amount</label>
-                <input
-                  {...register('amount')}
-                  type="text"
-                  className={`w-full bg-[#02010D] border-[0.3px] ${errors.amount ? 'border-red-500' : 'border-[#696969]'} rounded-lg px-4 h-[44px] text-white placeholder-white/30`}
-                />
-                {errors.amount && (
-                  <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
-                )}
+                <Controller
+  name="amount"
+  control={control}
+  render={({ field }) => (
+    <div>
+      <label className="block text-white text-sm mb-3 font-medium">
+      Amount
+      </label>
+      <input
+        {...field}
+        type="text"
+        placeholder="amount"
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          const validNumber = target.value.replace(/[^0-9]/g, "");
+          field.onChange(validNumber);
+        }}
+        onPaste={(e) => {
+          e.preventDefault();
+          const pastedValue = e.clipboardData.getData("text");
+          const sanitizedValue = pastedValue.replace(/[^0-9]/g, "");
+          field.onChange(sanitizedValue);
+        }}
+        className={`w-full bg-transparent border-[0.5px] ${
+          errors.amount ? "border-red-500" : "border-[#333]"
+        } rounded-lg px-4 h-[45px] text-white placeholder-gray-400 text-sm`}
+      />
+      {errors.amount && (
+        <p className="text-red-500 text-xs mt-1">
+          {errors.amount.message}
+        </p>
+      )}
+    </div>
+  )}
+/>
               </div>
 
               {/* Narration */}
@@ -180,17 +292,32 @@ const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
               </div>
 
               {/* Continue Button */}
-              <Button 
+              <Button
                 type="submit"
                 className="w-full bg-white text-[#2B3AA6] text-sm h-[40px] hover:bg-gray-100 font-medium py-3 rounded-lg"
-                // disabled={!isValid}
+              // disabled={!isValid}
               >
                 Continue
               </Button>
             </form>
           </DialogBody>
         </DialogContent>
+        <ErrorModal
+          isErrorModalOpen={isErrorModalOpen}
+          setErrorModalState={() => {
+            setErrorModalState(false);
+          }}
+          subheading={
+            errorModalMessage || "Please check your inputs and try again."
+          }
+        ></ErrorModal>
+
       </Dialog>
+
+      {
+        showWithdrawalPinModal && <WidthrawalPinModal isOpen={showWithdrawalPinModal} closeAll={onClose} onClose={() => setShowWithdrawalPinModal(false)} withdrawalPayload={withdrawalPayload} />
+      }
+    </>
   );
 };
 

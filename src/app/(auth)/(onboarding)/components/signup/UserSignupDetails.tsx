@@ -1,5 +1,5 @@
 import { signUpUserSchema } from "@/app/schema/SignupValidation";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,7 @@ import { AxiosError } from "axios";
 import { formatAxiosErrorMessage } from "@/utils";
 import { useErrorModalState } from "@/hooks";
 import { SmallSpinner } from "@/icons/core";
+import EyeIcon from "@/app/icons/EyeIcon";
 
 interface prop {
   setPhoneNumber: Dispatch<SetStateAction<string>>
@@ -27,6 +28,14 @@ const UserSignupDetails = ({setEmail, setPhoneNumber,onNext}: prop) => {
       errorModalMessage,
     } = useErrorModalState();
   const {mutate:handleSignUpUser, isLoading} = useRegisterUser()
+      const [passwordShown, setPasswordShown] = useState(false);
+      const [passwordShown2, setPasswordShown2] = useState(false);
+      const togglePassword = () => {
+          setPasswordShown(!passwordShown);
+        };
+      const togglePassword2 = () => {
+          setPasswordShown2(!passwordShown2);
+        };
   const {
     control,
     handleSubmit,
@@ -38,20 +47,21 @@ const UserSignupDetails = ({setEmail, setPhoneNumber,onNext}: prop) => {
     defaultValues: {
       email: "",
       full_name: "",
-    
+    password:"",
+    password_2:"",
       phone_number: "",
       referall_code: "",
     },
     mode: "onChange",
   });
 
-  const onSubmit =({email,full_name,phone_number,referall_code}:UserSignupDetailsValue)=>{
+  const onSubmit =({email,full_name,phone_number,referall_code,password,password_2}:UserSignupDetailsValue)=>{
     if(isValid){
       setEmail(email)
       setPhoneNumber(phone_number)
       // onNext(2)
       handleSignUpUser({
-        email,full_name,phone_number,referall_code
+        email,full_name,phone_number,referall_code,password,password_2
       },{
         onSuccess:()=>{
           onNext(2)
@@ -104,27 +114,7 @@ const UserSignupDetails = ({setEmail, setPhoneNumber,onNext}: prop) => {
             </p>
           )}
         </div>
-        {/* <div className="mt-[.5rem]">
-          <Label
-            className="mb-1 block text-sm font-outfit text-[#fff]"
-            htmlFor={``}
-          >
-            Last Name*
-          </Label>
-          <input
-            className={`${errors?.last_name ? "border border-red-700" : "border-[0.3px] border-[#696969]"} text-[#fff] font-outfit text-xs outline-none border-opacity-70  h-[2.75rem] md:h-[3.375rem] rounded-lg w-full px-6 bg-[#02010D]`}
-            placeholder="Enter your last name"
-            type="text"
-            id={`last_name`}
-            {...register(`last_name`)}
-          />
-
-          {errors?.last_name && (
-            <p className="text-red-700 text-xs mt-1">
-              {errors?.last_name?.message}
-            </p>
-          )}
-        </div> */}
+      
         <div className="mt-4">
           <Label
             className="mb-1 block text-sm font-outfit text-[#fff]"
@@ -211,6 +201,85 @@ const UserSignupDetails = ({setEmail, setPhoneNumber,onNext}: prop) => {
             </p>
           )}
         </div>
+
+         <div className="mt-4">
+                   <Label
+                          className="mb-1 block text-sm font-outfit text-[#fff]"
+                          htmlFor={``}
+                        >
+                    Pasword*
+                  </Label>
+        
+                  <div className={` ${errors?.password ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}>
+                
+        
+                    <input
+                      className={`
+                       
+                        login-autofill-text login-no-chrome-autofill-bg h-auto min-w-0 grow !bg-transparent py-3.5 pl-6 text-sm font-medium text-white placeholder:text-white focus-visible:outline-none`}
+                      id="password"
+                      // pattern="[0-9]*"
+                      placeholder="Enter password"
+                      type={passwordShown ? "text" : "password"}
+                      {...register("password")}
+                    />
+        
+                    {/* <div> */}
+                    <button
+                      type="button"
+                      className="absolute right-5"
+                      onClick={togglePassword}
+                    >
+                      <EyeIcon />
+                    </button>
+                    {/* </div> */}
+                  </div>
+         
+                  {errors?.password && (
+                      <p className="text-red-700 text-xs mt-1">
+                        {errors?.password?.message}
+                      </p>
+                    )}
+                  <p className="text-xs text-white max-w-[23.75rem] text-opacity-70 mt-2 font-outfit font-light">Must be at least 8 characters long - uppercase, lowercase, number,
+                  special characters (@*-!_)</p>
+              </div>
+                
+        
+                <div className="mt-4">
+                    <Label
+                           className="mb-1 block text-sm font-outfit text-[#fff]"
+                           htmlFor={``}
+                         >
+                    Confirm Pasword*
+                  </Label> <div className={` ${errors?.password_2 ? "border border-red-700" : "border-[0.3px] border-[#696969]"} flex items-center relative w-full pr-10 md:pr-16  !bg-white/10 rounded-lg h-[3.5rem] `}>
+                
+        
+        
+                    <input
+                      className="login-autofill-text login-no-chrome-autofill-bg h-auto min-w-0 grow !bg-transparent py-3.5 pl-6 text-sm font-medium text-white placeholder:text-white focus-visible:outline-none"
+                      id="password"
+                      // pattern="[0-9]*"
+                      placeholder="Enter password"
+                      type={passwordShown2 ? "text" : "password"}
+                      {...register("password_2")}
+                    />
+        
+                    {/* <div> */}
+                    <button
+                      type="button"
+                      className="absolute right-5"
+                      onClick={togglePassword2}
+                    >
+                      <EyeIcon />
+                    </button>
+                    {/* </div> */}
+                  </div>
+                  {errors?.password_2 && (
+                      <p className="text-red-700 text-xs mt-1">
+                        {errors?.password_2?.message}
+                      </p>
+                    )}
+              </div>
         <div className="mt-4">
           <Label
             className="mb-1 block text-sm font-outfit text-[#fff]"

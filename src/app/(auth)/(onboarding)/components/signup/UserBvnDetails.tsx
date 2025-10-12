@@ -4,23 +4,26 @@ import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { Button, ErrorModal } from "@/components/core";
+import { Button, ErrorModal, LinkButton } from "@/components/core";
 import CopyIcon from "@/app/icons/CopyIcon";
 import { useClipboard, useErrorModalState } from "@/hooks";
 import { useRequestBvnVerification } from "../../api/sign-up/requestBvnVerification";
 import { formatAxiosErrorMessage } from "@/utils";
 import { AxiosError } from "axios";
 import { SmallSpinner } from "@/icons/core";
+import { useQueryClient } from "react-query";
 
 interface prop {
   setBvn: Dispatch<SetStateAction<string>>
   onNext: (value: SetStateAction<number>) => void;
   onPrev: (value: SetStateAction<number>) => void;
+  openFrom?:"onboarding"| "dashboard"
+  email:string
 }
 
 export type UserSignupBvnDetailsValue = z.infer<typeof signUpUserBvnSchema>;
 
-const UserBvnDetails = ({ onNext, onPrev,setBvn }: prop) => {
+const UserBvnDetails = ({ onNext, email, setBvn,openFrom="onboarding" }: prop) => {
   const { copy } = useClipboard();
   const {
     isErrorModalOpen,
@@ -42,16 +45,20 @@ const UserBvnDetails = ({ onNext, onPrev,setBvn }: prop) => {
     mode: "onChange",
   });
 
+  const queryClient = useQueryClient()
   const onSubmit = ({ bvn_number }: UserSignupBvnDetailsValue) => {
     if (isValid) {
       setBvn(bvn_number)
       handleRequestVerification(
         {
           bvn_number,
+          email
         },
         {
           onSuccess: () => {
             onNext(3);
+            queryClient.invalidateQueries({queryKey:["user-details"]})
+
           },
           onError: (error) => {
             
@@ -63,19 +70,19 @@ const UserBvnDetails = ({ onNext, onPrev,setBvn }: prop) => {
     }
   };
   return (
-    <div className="text-white relative border-[.0187rem] py-6 xl:py-[1.75rem]  border-[#4649E5] px-6 md:px-[50px] 2xl:px-[6.1875rem] rounded-[1.25rem]">
+    <div className={`text-white relative border-[.0187rem] py-6 xl:py-[1.75rem]  border-[#4649E5] ${openFrom === "onboarding"?" px-6 md:px-[50px] 2xl:px-[6.1875rem]":" px-8 "} rounded-[1.25rem]`}>
       <div className="">
         <h2 className="text-white font-verdana font-bold text-[1.25rem] xl:text-[1.75rem]">
           BVN Verification
         </h2>
-        <p className="font-outfit text-sm xl:text-base text-white max-w-[290px] text-opacity-70 font-light">
+        <p className="font-outfit text-sm  text-white max-w-[290px] text-opacity-70 font-light">
           This is to create your operational wallet account
         </p>
-        <div className="absolute right-10 xl:right-16 top-14">
+        {openFrom==="onboarding" &&<div className="absolute right-10 xl:right-16 top-14">
           <p className="font-outfit font-semibold text-white text-xs xl:text-base">
             2/6
           </p>
-        </div>
+        </div>}
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
@@ -127,7 +134,7 @@ const UserBvnDetails = ({ onNext, onPrev,setBvn }: prop) => {
                       const validBvn = target.value.replace(/[^0-9]/g, "");
                       field.onChange(validBvn);
                     }}
-                    // onChange={(e) => field.onChange(e.target.value)}
+                    // onChange={(e) => field.onChange(e.target.value)}~
                   />
                 )}
               />
@@ -172,13 +179,13 @@ const UserBvnDetails = ({ onNext, onPrev,setBvn }: prop) => {
           > 
             Verify {isLoading && <SmallSpinner color="blue"/>}
           </Button>
-          <Button
+         {openFrom==="onboarding" &&<LinkButton href={"/login"}
             className="w-full border-[0.5px] border-[#FFFFFF] font-extralight mt-6 text-white h-11 rounded-10 font-outfit text-sm "
             variant={"outlined"}
-            onClick={() => onPrev(1)}
+           
           >
             Skip
-          </Button>
+          </LinkButton>}
         </div>
       </form>
 

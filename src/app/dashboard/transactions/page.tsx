@@ -107,16 +107,16 @@ const TransactionPage = () => {
                         </div>
                     </div>
                   
-                    <div className="flex items-center gap-4">
+                    {/* <div className="flex items-center gap-4">
                         <div className="">
                             <Button 
                                 className="bg-white text-[#2B3AA6] font-outfit text-sm h-[46px]"
                                 onClick={() => setWithdrawalModalOpen(true)}
                             >
-                               Export
+                               Withdrawal
                             </Button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {isLoading ? (

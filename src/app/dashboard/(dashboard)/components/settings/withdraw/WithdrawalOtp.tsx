@@ -23,11 +23,12 @@ import CloseIcon from "@/app/icons/CloseIcon";
 interface prop {
  isOpen: boolean;
   onClose: () => void;
+  email:string
 }
 
 export type UserSignupOtpDetailsValue = z.infer<typeof signUpUserOtpSchema>;
 
-const UserWidthdrawalOtpVerification = ({ isOpen,onClose }: prop) => {
+const UserWidthdrawalOtpVerification = ({ isOpen,onClose ,email}: prop) => {
   const {
     isErrorModalOpen,
     setErrorModalState,
@@ -115,7 +116,8 @@ const UserWidthdrawalOtpVerification = ({ isOpen,onClose }: prop) => {
     
     handleRequestVerification(
       {
-        bvn_number:String(user?.data?.bvn_number) || "2219398034",
+        bvn_number:String(user?.data?.bvn_number),
+        email
       },
       {
         onSuccess: () => {
@@ -136,8 +138,8 @@ useEffect(() => {
 
   handleRequestVerification(
       {
-        bvn_number:String(user?.data?.bvn_number) || "2219398034",
-       
+        bvn_number:String(user?.data?.bvn_number) ,
+       email
       },
       {
         onSuccess: () => {

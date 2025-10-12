@@ -72,7 +72,7 @@ const Footer = () => {
     },
   ]
   return (
-    <div className="py-[4.5rem] px-4">
+    <div className="py-[4.5rem] px-4 md:px-10">
       <div className="grid grid-cols-2 gap-[1.75rem] xl:gap-[2.375rem] 2xl:gap-[4.375rem]  sm:grid-cols-[1.4fr_1fr_1fr] lg:grid-cols-[1.3fr_1fr_1fr_1fr]  2xl:grid-cols-[1.2fr_1fr_1fr_1fr]">
         <div className="max-md:col-span-2">
           <LinkButton

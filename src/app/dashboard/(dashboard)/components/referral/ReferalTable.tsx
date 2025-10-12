@@ -21,6 +21,8 @@ import { ReferralData, referralMockData } from './mockData'
 import { createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
 import { convertKebabAndSnakeToTitleCase } from '@/utils'
 import { convertNumberToNaira } from '@/utils/currency'
+import { referalTableProp, useFetchReferralTable } from '@/app/dashboard/misc/api/referral/fetchRefferalTable'
+import moment from 'moment'
 
 type FilterOption = {
   id: string;
@@ -35,14 +37,14 @@ export const SkeletonLoading = () => (
 const ReferalTable = () => {
     const [globalFilter, setGlobalFilter] = useState("")
     const [selectedFilter, setSelectedFilter] = useState<string | null>(null)
-    
     const filterOptions: FilterOption[] = [
-      { id: 'all', label: 'All Referrals' },
-      { id: 'verified', label: 'Verified' },
-      { id: 'pending', label: 'Pending' },
-      { id: 'rejected', label: 'Rejected' },
-      { id: 'recent', label: 'Recent' }
+      { id: '', label: 'All' },
+      { id: 'DEPOSITED', label: 'Deposited' },
+      { id: 'WITHDRAWN', label: 'Withdrawn' },
+      { id: 'PENDING', label: 'Pending' },
+      
     ]
+    const {data, isLoading}=useFetchReferralTable(String(selectedFilter))
     
     const handleFilterSelect = (filterId: string) => {
       setSelectedFilter(filterId)
@@ -54,7 +56,7 @@ const ReferalTable = () => {
 
     
 
-  const columnHelper = createColumnHelper<ReferralData>();
+  const columnHelper = createColumnHelper<referalTableProp>();
 
 
   
@@ -72,9 +74,13 @@ const ReferalTable = () => {
       }),
       columnHelper.accessor("date", {
         header: () => "Date",
-        cell: (info) => convertKebabAndSnakeToTitleCase(info.getValue() as string),
+      cell: (info) => {
+  const value = info.getValue() as string;
+  const date = moment(value);
+  return date?.isValid() ? date.format("ll") : "nill";
+}
       }),
-      columnHelper.accessor("rewardEarned", {
+      columnHelper.accessor("reward_earned", {
         header: () => "Reward Earned",
         cell: (info) => info.getValue(),
       }),
@@ -89,7 +95,7 @@ const ReferalTable = () => {
   );
   
     const table = useReactTable({
-      data:  referralMockData ?? [],
+      data:  data?.data ?? [],
       columns,
       state: {
         globalFilter,
@@ -101,8 +107,7 @@ const ReferalTable = () => {
     });
   
     const rows = useMemo(() =>referralMockData ?? [], [referralMockData]);
-  
-  const [isLoading, setIsLoading] = useState(false)
+
     
   return (
     <div className='bg-[#090E29] mt-5 rounded-10 border-[0.3px] border-[#4453DD]'>
@@ -172,7 +177,7 @@ const ReferalTable = () => {
                 </TableHeader>
                 <TableBody>
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <TableRow key={index} className="hover:bg-[#f5f7ff] py-2">
+                    <TableRow key={index} className="py-2">
                       <TableCell className="text-xs cursor-pointer font-nunito py-2">
                         <SkeletonLoading />
                       </TableCell>
@@ -188,22 +193,14 @@ const ReferalTable = () => {
                       <TableCell className="text-xs cursor-pointer font-nunito py-2">
                         <SkeletonLoading />
                       </TableCell>
-                      <TableCell className="text-xs cursor-pointer font-nunito py-2">
-                        <SkeletonLoading />
-                      </TableCell>
-                      <TableCell className="text-xs cursor-pointer font-nunito py-2">
-                        <SkeletonLoading />
-                      </TableCell>
-                      <TableCell className="text-xs cursor-pointer font-nunito py-2">
-                        <SkeletonLoading />
-                      </TableCell>
+                      
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
   :
          <Table className=''>
-                <TableHeader className="bg-[#0B1739]   ">
+                <TableHeader className="bg-[#0B1739]">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useUser } from '@/app/(auth)/(onboarding)/api/getUserDetails'
 import { useQueryClient } from 'react-query'
 import { useAuth } from '@/contexts/authentication'
+import { tokenStorage } from '@/app/(auth)/(onboarding)/misc/utils'
 
 interface DashboardHeaderProps {
   onMenuClick?: () => void;
@@ -30,6 +31,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onMenuClick }) => {
   const handleLogOut = () => {
     if (authDispatch) authDispatch({ type: 'LOGOUT' });
     queryClient.clear();
+     tokenStorage.clearAll()
+        // tokenStorage.clearToken()
     replace('/login');
   };
 
@@ -85,15 +88,22 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onMenuClick }) => {
           </Button>
         </div>
         
-        <div className="md:w-[2.5rem] md:h-[2.5rem] h-[2rem] w-[2rem] rounded-full flex justify-center items-center bg-[#122251]">
-          <Image
-            alt='User profile'
-            className='rounded-full'
-            src={"/images/dashboard/userIcon.png"}
-            height={40}
-            width={40}
-          />
-        </div>
+        <div className="md:w-[2.5rem] md:h-[2.5rem] h-[2rem] w-[2rem] rounded-full flex justify-center items-center bg-[#122251] text-white font-medium">
+  {user?.data?.profile_image ? (
+    <Image
+      alt=""
+      className="rounded-full object-cover"
+      src={user.data.profile_image}
+      height={40}
+      width={40}
+    />
+  ) : (
+    <span>
+      {`${user?.data?.full_name?.split(" ")[0] ?? ""}${user?.data?.full_name?.split(" ")[0] ?? ""}`}
+    </span>
+  )}
+</div>
+
         
         {/* User Info and Dropdown */}
         <div className="relative" ref={dropdownRef}>

@@ -10,7 +10,7 @@ const BenefitsSection = () => {
       description: "Get real time signals from our experts",
       id: 1,
       content: "Reliable Investment Opportunity",
-      link: "#",
+       link: "/dashboard/investment",
       img: "/images/homepage/banner1.png",
     },
     {
@@ -18,7 +18,7 @@ const BenefitsSection = () => {
       description: "Optimize your risk management with our platform",
       id: 2,
       content: "Risk Management & Optimization",
-      link: "#",
+     link: "/dashboard/investment",
       img: "/images/homepage/banner2.png",
     },
     {
@@ -26,7 +26,7 @@ const BenefitsSection = () => {
       description: "Get expert-led trading signals",
       id: 3,
       content: "Expert-Led Trading",
-      link: "#",
+       link: "/dashboard/investment",
       img: "/images/homepage/banner3.png",
     },
     {
@@ -34,7 +34,7 @@ const BenefitsSection = () => {
       description: "Experience transparency and security with our platform",
       id: 4,
       content: "Transparency & Security",
-      link: "#",
+       link: "/dashboard/investment",
       img: "/images/homepage/banner4.png",
     },
     {
@@ -42,7 +42,7 @@ const BenefitsSection = () => {
       description: "Get access to onlending services",
       id: 5,
       content: "Onlending",
-      link: "#",
+     link: "/dashboard/investment",
       img: "/images/homepage/banner5.png",
     },
   ];
@@ -53,7 +53,7 @@ const BenefitsSection = () => {
         "OptiCraft Trading provides a seamless and trustworthy avenue for individuals to invest their capital, ensuring steady monthly returns",
       id: 1,
       content: "Invoice Discounting",
-      link: "#",
+    link: "/dashboard/investment",
       img: "/images/homepage/banner1.png",
     },
     {
@@ -61,7 +61,7 @@ const BenefitsSection = () => {
       description: "Get real time signals from our experts",
       id: 2,
       content: "Risk Management & Optimization",
-      link: "#",
+      link: "/dashboard/investment",
       img: "/images/homepage/banner2.png",
     },
    

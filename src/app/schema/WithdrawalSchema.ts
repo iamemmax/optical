@@ -1,16 +1,16 @@
 import { z } from "zod";
 
 export const withdrawalSchema = z.object({
-  bank: z
+  bank_code: z
     .string()
     .min(1, { message: "Please select a bank" }),
   
-  accountNumber: z
+  account_number: z
     .string()
     .min(10, { message: "Account number should be at least 10 digits" })
     .regex(/^\d+$/, { message: "Account number must contain only digits" }),
   
-  accountName: z
+  account_name: z
     .string()
     .min(3, { message: "Please enter a valid account name" }),
   
@@ -32,3 +32,4 @@ export const withdrawalSchema = z.object({
 });
 
 export type WithdrawalFormValues = z.infer<typeof withdrawalSchema>;
+

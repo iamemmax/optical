@@ -1,5 +1,5 @@
 "use client"
-import SubscriptionPricing from '@/app/dashboard/(dashboard)/subscription/page'
+import SubscriptionPricing from '@/app/dashboard/subscription/page'
 import React from 'react'
 
 const page = () => {

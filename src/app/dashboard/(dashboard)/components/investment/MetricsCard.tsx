@@ -179,11 +179,11 @@ const InvestmentChart = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#090E29] p-4 md:p-6">
+    <div className="min-h-screen bg-[#090E29] p-2 md:p-6">
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6">
         {/* ROI Growth Chart */}
         <div className=" bg-[#090E29] border-[0.3px] border-[#4453DD] rounded-lg p-4 md:p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-3 md:space-y-0">
+          <div className="flex flex-row justify-between items-center mb-6 space-y-3 md:space-y-0">
             <h2 className="text-white text-lg md:text-xl font-semibold">
               ROI Growth Value
             </h2>
@@ -248,8 +248,8 @@ const InvestmentChart = () => {
         </div>
 
         {/* Portfolio Pie Chart */}
-        <div className="bg-[#090E29] w-full border-[0.3px] border-[#4453DD] rounded-lg p-4 md:p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-3 md:space-y-0">
+        <div className="bg-[#090E29] max-md:h-[500px] w-full border-[0.3px] border-[#4453DD] rounded-lg p-4 md:p-6">
+          <div className="flex flex-row justify-between items-center mb-6 space-y-3 md:space-y-0">
             <h2 className="text-white text-lg md:text-xl font-semibold">
               Portfolio
             </h2>
@@ -339,7 +339,7 @@ const InvestmentChart = () => {
                     className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-gray-300 text-sm">
+                  <span className="text-gray-300 text-[10px] md:text-sm">
                     {item.name} - {item.formattedValue}
                   </span>
                 </div>
@@ -365,43 +365,48 @@ const InvestmentChart = () => {
       </div>
 
       {/* Analytics Line Chart */}
-      <div className="bg-[#090E29] border-[0.3px] border-[#4453DD] mt-6 rounded-lg p-4 md:p-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-3 md:space-y-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-8">
-            <h2 className="text-white text-lg md:text-xl font-semibold">
-              Analytics
-            </h2>
-            <div className="flex flex-wrap items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full" />
-                <span className="text-gray-300 text-sm">
-                  ROI - ₦{addCommasToNumber(chartData?.reduce((acc, curr) => acc + Number(curr?.roi_chart_data), 0))}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full" />
-                <span className="text-gray-300 text-sm">
-                  Invested - ₦{addCommasToNumber(chartData?.reduce((acc, curr) => acc + Number(curr?.trading_investment), 0))}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="max-w-[8.75rem]">
-              <Select
-                className="w-full rounded-lg capitalize"
-                components={{
-                  IndicatorSeparator: () => null,
-                }}
-                defaultValue={filterStatus.find(
-                  (option) => option.value === selectedOption
-                )}
-                options={filterStatus}
-                styles={selectStyle}
-                isSearchable={false}
-                onChange={handleTradingAnalysisOption}
-              />
-            </div>
-        </div>
+     <div className="bg-[#090E29] border-[0.3px] border-[#4453DD] mt-6 rounded-lg p-4 md:p-6">
+      <div className="flex flex-col space-y-4 mb-6 md:flex-row md:justify-between md:items-center md:space-y-0">
+  <div className="flex flex-col space-y-3 sm:space-y-4">
+    {/* Title */}
+    <h2 className="text-white text-lg md:text-xl font-semibold">
+      Analytics
+    </h2>
+    
+    {/* Legend Items - Responsive Layout */}
+    <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-6 lg:space-x-8">
+      <div className="flex items-center space-x-2">
+        <div className="w-3 h-3 bg-green-500 rounded-full flex-shrink-0" />
+        <span className="text-gray-300 text-xs sm:text-sm break-all">
+          ROI - ₦{addCommasToNumber(chartData?.reduce((acc, curr) => acc + Number(curr?.roi_chart_data), 0))}
+        </span>
+      </div>
+      <div className="flex items-center space-x-2">
+        <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0" />
+        <span className="text-gray-300 text-xs sm:text-sm break-all">
+          Invested - ₦{addCommasToNumber(chartData?.reduce((acc, curr) => acc + Number(curr?.trading_investment), 0))}
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  {/* Select Dropdown */}
+  <div className="w-full sm:w-auto sm:max-w-[8.75rem] mt-2 md:mt-0">
+    <Select
+      className="w-full rounded-lg capitalize"
+      components={{
+        IndicatorSeparator: () => null,
+      }}
+      defaultValue={filterStatus.find(
+        (option) => option.value === selectedOption
+      )}
+      options={filterStatus}
+      styles={selectStyle}
+      isSearchable={false}
+      onChange={handleTradingAnalysisOption}
+    />
+  </div>
+</div>
 
         <div className="h-[300px] sm:h-[400px]">
               {

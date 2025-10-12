@@ -91,7 +91,7 @@ const OnleandingInvestment = () => {
         header: () => "Status",
         cell: (info) => (
           <div
-            className={` max-w-[100px] flex justify-center items-center py-[.5625rem] text-sm font-medium bg-transparent rounded-lg border-[0.3px] ${getStatusColor(convertKebabAndSnakeToTitleCase(info.getValue()))}`}
+            className={` max-w-[100px] flex justify-center items-center px-3 py-[.5625rem] text-sm font-medium bg-transparent rounded-lg border-[0.3px] ${getStatusColor(convertKebabAndSnakeToTitleCase(info.getValue()))}`}
           >
             {convertKebabAndSnakeToTitleCase(info.getValue())}
           </div>
@@ -103,7 +103,7 @@ const OnleandingInvestment = () => {
           <div className="">
             <LinkButton
               href={`/dashboard/investment/${info?.row?.original?.id}/asset-details`}
-              className="text-white px-6 py-3 border-white border-[0.3px] border-opacity-50"
+              className="text-white px-3 md:px-6 py-3 max-md:w-[100px] border-white border-[0.3px] border-opacity-50"
               variant="outlined"
             >
               View Details
@@ -138,30 +138,38 @@ const OnleandingInvestment = () => {
   // const rows = useMemo(() => investmentData?.results, []); // This had empty dependency array!
 
   return (
-    <div className="px-8 py-6 bg-[#090E29] h-full">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h2 className="text-white font-bold font-verdana text-base">
-            Investment Table
-          </h2>
-          <div className="relative">
-            <DebounceInput
-              onChange={(e) => setSearchTerm(e)}
-              value={searchTerm}
-              placeHolder="Search a transaction"
-              className="bg-transparent"
-              containerClassName="border-[0.4px] border-opacity-40 border-white rounded-[10px]"
-            />
-          </div>
-        </div>
-        <Button
-          variant="outlined"
-          className="bg-slate-700/50 border-slate-600 text-white hover:bg-slate-700"
-        >
-          <FIlterIcon className="w-4 h-4 mr-2" />
-          Filter
-        </Button>
+    <div className="md:px-8 py-6 px-3 bg-[#090E29] h-full">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4 flex-1">
+      <div className="md:min-w-fit">
+        <h2 className="text-white font-bold font-verdana text-base whitespace-nowrap">
+          Onlending Investment
+        </h2>
       </div>
+      
+      {/* Search and Filter - Side by side on mobile, separate on desktop */}
+      <div className="flex gap-3 md:block md:flex-1 md:max-w-md">
+        <div className="flex-1 md:w-full">
+          <DebounceInput
+            onChange={(e) => setSearchTerm(e)}
+            value={searchTerm}
+            placeHolder="Search a transaction"
+            className="bg-transparent w-full"
+            containerClassName="border-[0.4px] border-opacity-40 border-white rounded-[10px] w-full"
+          />
+        </div>
+        
+        {/* Filter button - shows here on mobile */}
+        {/* <div className="md:hidden">
+          <Button
+            variant="outlined"
+            className="bg-slate-700/50 h-[3rem] border-slate-600 text-white hover:bg-slate-700 whitespace-nowrap"
+          >
+            <FIlterIcon className="w-4 h-4 mr-2" />
+            Filter
+          </Button>
+        </div> */}
+      </div>
+    </div>
 
       <div className="block overflow-x-auto mt-6">
         {isLoadingInvestmentTable ? (
@@ -205,7 +213,7 @@ const OnleandingInvestment = () => {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead
-                      className="font-nunito  text-sm text-white font-medium"
+                      className="font-nunito  text-xs md:text-sm text-white font-medium"
                       key={header.id}
                     >
                       {flexRender(
@@ -225,7 +233,7 @@ const OnleandingInvestment = () => {
                   <TableRow className={`hover:bg-[#212d4e]`} key={row.id}>
                     {row.getVisibleCells().map((cell, idx) => (
                       <TableCell
-                        className={`text-sm text-white cursor-pointer font-nunito py-5 border-opacity-50 border-y-[#E2E8F0] ${
+                        className={`text-xs md:text-sm text-white cursor-pointer font-nunito py-5 border-opacity-50 border-y-[#E2E8F0] ${
                           row.getVisibleCells().length - 1 === idx
                             ? "border-y-[0.3px] border-[#E2E8F0]"
                             : "border-y-[0.3px]"

@@ -54,7 +54,7 @@ export function ErrorModal({
               fill="#EF4444"
             />
           </svg>
-          <DialogClose className="ml-auto bg-[#F2F5FF] rounded  text-red-900  flex justify-center items-center">
+          <DialogClose className="ml-auto bg-[#aca7a7] p-1 px-4 rounded  text-red-900  flex justify-center items-center">
             <CloseIcon />
           </DialogClose>
         </DialogHeader>

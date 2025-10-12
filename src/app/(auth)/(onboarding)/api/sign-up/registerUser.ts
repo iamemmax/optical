@@ -6,11 +6,13 @@ interface signup {
   first_name: string;
   last_name: string;
   email: string;
+  passsword:string,
+  password_2?:string
 }
-const registerUser = async({email,full_name,phone_number,referall_code}:UserSignupDetailsValue)=>{
+const registerUser = async({email,full_name,phone_number,referall_code,password}:UserSignupDetailsValue)=>{
 const response = await adminAxios.post(`/api/main/signup/`,{
     email,
-    full_name,phone_number,referall_code
+    full_name,phone_number,referall_code,password
 },{
     headers:{
         Authorization:undefined
